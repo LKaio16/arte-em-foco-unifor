@@ -12,10 +12,11 @@ import com.example.arteemfoco.screens.ProfileScreen
 import com.example.arteemfoco.screens.SettingsScreen
 
 @Composable
-fun BottomNavGraph(navController: NavHostController) {
+fun BottomNavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
     NavHost(
         navController = navController,
-        startDestination = BottomBarScreen.Home.route
+        startDestination = BottomBarScreen.Home.route,
+        modifier = modifier
     ) {
         composable(route = BottomBarScreen.Home.route) {
             HomeScreen()
