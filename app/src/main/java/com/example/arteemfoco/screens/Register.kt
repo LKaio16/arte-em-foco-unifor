@@ -13,7 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun HomeScreen() {
+fun RegisterScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -31,7 +31,7 @@ fun HomeScreen() {
 
 @Composable
 @Preview
-fun HomeScreenPreview() {
+fun RegisterScreenPreview() {
     HomeScreen()
 }
 

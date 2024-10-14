@@ -78,7 +78,7 @@ fun RowScope.AddItem(
                 popUpTo(navController.graph.findStartDestination().id)
                 launchSingleTop = true
             }
-        }, modifier = Modifier.background(MaterialTheme.colors.secondary)
+        }, modifier = Modifier.background(MaterialTheme.colors.primary) // background navbar
     )
 }
 

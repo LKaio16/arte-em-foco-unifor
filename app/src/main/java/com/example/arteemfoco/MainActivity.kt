@@ -32,6 +32,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.arteemfoco.ui.theme.ArteEmFocoTheme
+import com.example.arteemfoco.ui.theme.Purple80
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -46,8 +47,8 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             ArteEmFocoTheme {
 //                teste cores nav
-                val colorPrimary = MaterialTheme.colorScheme.inversePrimary
-                window.navigationBarColor = colorPrimary.toArgb()
+                val colorPrimary = MaterialTheme.colorScheme.primary
+                window.navigationBarColor = Purple80.toArgb()
 
                 NavHost(navController = navController, startDestination = "tela1") {
                     // Navegação para as telas sem BottomBar
@@ -56,6 +57,7 @@ class MainActivity : ComponentActivity() {
 
                     // Navegação para a MainScreen (com BottomBar)
                     composable("mainScreen") { MainScreen() }
+
                 }
             }
         }
@@ -88,8 +90,8 @@ fun Tela1(navController: NavController) {
     ) {
         Text(text = "Tela 1")
         CaixaTexto()
-        val colorPrimary = MaterialTheme.colorScheme.inversePrimary
-//        teste cor
+        val colorPrimary = MaterialTheme.colorScheme.primary
+//      teste cor
         Button(modifier = Modifier.background(colorPrimary),onClick = { navController.navigate("tela2") }) {
             Text("Ir para Tela 2")
         }
@@ -151,4 +153,10 @@ fun LabelInput(text: String) {
             modifier = Modifier.fillMaxWidth()
         )
     }
+}
+
+@Preview
+@Composable
+private fun MainScreenPreview() {
+    MainScreen()
 }
