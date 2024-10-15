@@ -60,7 +60,7 @@ class MainActivity : ComponentActivity() {
 
                 NavHost(navController = navController, startDestination = "tela1") {
                     // Navegação para as telas sem BottomBar
-                    composable("tela1") { LoginScreen(navController) }
+                    composable("tela1") { com.example.arteemfoco.screens.LoginScreen(navController) }
                     composable("tela2") { RegisterScreen(navController) }
 
                     // Navegação para a MainScreen (com BottomBar)
@@ -89,28 +89,6 @@ fun GreetingPreview() {
 }
 
 
-@Composable
-fun LoginScreen(navController: NavController) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxSize().background(color = Color.White)
-    ) {
-        Text(text = "LOGIN", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        Spacer(Modifier.height(10.dp))
-        CaixaTexto("Usuário")
-        Spacer(Modifier.height(20.dp))
-        CaixaTexto("Senha")
-        Spacer(Modifier.height(30.dp))
-        val colorPrimary = MaterialTheme.colorScheme.primary
-//      teste cor
-        Button(
-            modifier = Modifier.background(colorPrimary),
-            onClick = { navController.navigate("tela2") }) {
-            Text("Entrar")
-        }
-    }
-}
 
 @Composable
 fun RegisterScreen(navController: NavController) {
@@ -145,7 +123,7 @@ fun CaixaTexto(placeholder: String) {
 
         TextField(value = textState, onValueChange = {
             textState = it
-        }, modifier = Modifier.width(350.dp), placeholder = {
+        }, modifier = Modifier.width(250.dp), placeholder = {
             Text(placeholder)
         })
 
@@ -175,11 +153,4 @@ fun LabelInput(text: String) {
 @Composable
 private fun MainScreenPreview() {
     MainScreen()
-}
-
-@Preview
-@Composable
-private fun LoginScreenPreview() {
-    val navController = rememberNavController()
-    LoginScreen(navController)
 }

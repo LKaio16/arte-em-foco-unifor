@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun HomeScreen() {
@@ -29,9 +30,10 @@ fun HomeScreen() {
     }
 }
 
-@Composable
 @Preview
-fun HomeScreenPreview() {
-    HomeScreen()
+@Composable
+private fun HomeScreenPreview() {
+    val navController = rememberNavController()
+    LoginScreen(navController)
 }
 
