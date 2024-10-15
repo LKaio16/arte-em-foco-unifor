@@ -92,7 +92,7 @@ fun QuizScreen(navController: NavController) {
             Spacer(Modifier.height(20.dp))
 
             // Alternativas
-            Column(modifier = Modifier.clickable { }) {
+            Column(modifier = Modifier.clickable {navController.navigate("quizEndScreen")  }) {
                 Text(text = "Alternativas", fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(10.dp))
                 Alternative("Alternativa 1", "Vorem ipsum dolor sit amet, consectetur adipiscing elit.")

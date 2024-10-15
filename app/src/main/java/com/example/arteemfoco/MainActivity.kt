@@ -42,6 +42,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.arteemfoco.screens.LoginScreen
 import com.example.arteemfoco.screens.StartScreen
+import com.example.arteemfoco.screens.quiz.QuizEndScreen
 import com.example.arteemfoco.screens.quiz.QuizEnterCodeScreen
 import com.example.arteemfoco.screens.quiz.QuizEnterNameScreen
 import com.example.arteemfoco.screens.quiz.QuizEnterNameScreenPreview
@@ -72,6 +73,7 @@ class MainActivity : ComponentActivity() {
                     composable("quizEnterCodeScreen") { QuizEnterCodeScreen(navController) }
                     composable("quizEnterNameScreen") { QuizEnterNameScreen(navController) }
                     composable("quizScreen") { QuizScreen(navController) }
+                    composable("quizEndScreen") { QuizEndScreen(navController) }
 
 
                     // Navegação para a MainScreen (com BottomBar)
