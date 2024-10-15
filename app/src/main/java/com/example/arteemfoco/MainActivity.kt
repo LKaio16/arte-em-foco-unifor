@@ -40,6 +40,11 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.arteemfoco.screens.LoginScreen
+import com.example.arteemfoco.screens.StartScreen
+import com.example.arteemfoco.screens.quiz.QuizEnterCodeScreen
+import com.example.arteemfoco.screens.quiz.QuizEnterNameScreen
+import com.example.arteemfoco.screens.quiz.QuizEnterNameScreenPreview
 import com.example.arteemfoco.ui.theme.ArteEmFocoTheme
 import com.example.arteemfoco.ui.theme.Purple80
 import dagger.hilt.android.AndroidEntryPoint
@@ -58,10 +63,13 @@ class MainActivity : ComponentActivity() {
                 val colorPrimary = MaterialTheme.colorScheme.primary
                 window.navigationBarColor = Purple80.toArgb()
 
-                NavHost(navController = navController, startDestination = "tela1") {
+                NavHost(navController = navController, startDestination = "startScreen") {
                     // Navegação para as telas sem BottomBar
-                    composable("tela1") { com.example.arteemfoco.screens.LoginScreen(navController) }
+                    composable("startScreen") { StartScreen(navController) }
                     composable("tela2") { RegisterScreen(navController) }
+                    composable("loginScreen") { LoginScreen(navController) }
+                    composable("quizEnterCodeScreen") { QuizEnterCodeScreen(navController) }
+                    composable("quizEnterNameScreen") { QuizEnterNameScreen(navController) }
 
                     // Navegação para a MainScreen (com BottomBar)
                     composable("mainScreen") { MainScreen() }
@@ -71,23 +79,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    ArteEmFocoTheme {
-        Greeting("Android")
-    }
-}
-
 
 
 @Composable
