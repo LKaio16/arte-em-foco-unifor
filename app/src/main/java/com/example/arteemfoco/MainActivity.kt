@@ -45,6 +45,7 @@ import com.example.arteemfoco.screens.StartScreen
 import com.example.arteemfoco.screens.quiz.QuizEnterCodeScreen
 import com.example.arteemfoco.screens.quiz.QuizEnterNameScreen
 import com.example.arteemfoco.screens.quiz.QuizEnterNameScreenPreview
+import com.example.arteemfoco.screens.quiz.QuizScreen
 import com.example.arteemfoco.ui.theme.ArteEmFocoTheme
 import com.example.arteemfoco.ui.theme.Purple80
 import dagger.hilt.android.AndroidEntryPoint
@@ -59,7 +60,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val navController = rememberNavController()
             ArteEmFocoTheme {
-//                teste cores nav
+
                 val colorPrimary = MaterialTheme.colorScheme.primary
                 window.navigationBarColor = Purple80.toArgb()
 
@@ -70,6 +71,8 @@ class MainActivity : ComponentActivity() {
                     composable("loginScreen") { LoginScreen(navController) }
                     composable("quizEnterCodeScreen") { QuizEnterCodeScreen(navController) }
                     composable("quizEnterNameScreen") { QuizEnterNameScreen(navController) }
+                    composable("quizScreen") { QuizScreen(navController) }
+
 
                     // Navegação para a MainScreen (com BottomBar)
                     composable("mainScreen") { MainScreen() }
