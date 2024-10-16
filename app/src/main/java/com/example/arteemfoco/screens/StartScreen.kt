@@ -74,7 +74,7 @@ fun StartScreen(navController: NavController) {
                 .width(250.dp)
                 .clip(RoundedCornerShape(10.dp))
                 .background(colorPrimary),
-            onClick = { navController.navigate("tela2") }) {
+            onClick = { navController.navigate("obraScreen") }) {
             androidx.compose.material3.Text("Ver Obras")
         }
 

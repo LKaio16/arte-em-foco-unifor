@@ -42,7 +42,7 @@ fun QuizScreen(navController: NavController) {
             color = Color.Black,
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .padding(top = 16.dp) // Espaçamento do topo
+                .padding(top = 20.dp) // Espaçamento do topo
         )
 
 

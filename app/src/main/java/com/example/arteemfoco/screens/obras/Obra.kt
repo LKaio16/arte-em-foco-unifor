@@ -9,6 +9,7 @@ import androidx.compose.material.Icon
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,14 +31,19 @@ fun ObraScreen(navController: NavController) {
             .background(Color.White) // Fundo branco para toda a tela
     ) {
 
-        Icon(
-            imageVector = Icons.Default.ArrowBack,
-            contentDescription = "Voltar",
-            tint = Color.Black,
-            modifier = Modifier
-                .clickable { navController.popBackStack() }
-                .padding(top = 14.dp, start = 16.dp)
-        )
+        Box(
+            modifier = Modifier.padding(start = 17.dp, top = 37.dp),
+            contentAlignment = Alignment.BottomEnd
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = "Voltar",
+                tint = Color.Black,
+                modifier = Modifier
+                    .clickable { navController.popBackStack() }
+            )
+        }
+
 
 
         Text(
@@ -47,7 +53,7 @@ fun ObraScreen(navController: NavController) {
             color = Color.Black,
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .padding(top = 16.dp),
+                .padding(top = 40.dp),
             textAlign = TextAlign.Center
         )
 
@@ -57,19 +63,18 @@ fun ObraScreen(navController: NavController) {
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxSize()
         ) {
-            Spacer(Modifier.height(80.dp)) // Espaço para afastar o conteúdo do título
 
             Column(
-                modifier = Modifier.clickable { navController.navigate("quizEndScreen") },
+                modifier = Modifier.clickable { navController.navigate("obraViewScreen") },
                 verticalArrangement = Arrangement.spacedBy(3.dp)
             ) {
-                ObraCard("Alternativa 1", "Vorem ipsum dolor sit amet, consectetur adipiscing elit.")
+                ObraCard("Obra 1", "Vorem ipsum dolor sit amet, consectetur adipiscing elit.")
                 Spacer(Modifier.height(10.dp))
-                ObraCard("Alternativa 2", "Vorem ipsum dolor sit amet, consectetur adipiscing elit.")
+                ObraCard("Obra 2", "Vorem ipsum dolor sit amet, consectetur adipiscing elit.")
                 Spacer(Modifier.height(10.dp))
-                ObraCard("Alternativa 3", "Vorem ipsum dolor sit amet, consectetur adipiscing elit.")
+                ObraCard("Obra 3", "Vorem ipsum dolor sit amet, consectetur adipiscing elit.")
                 Spacer(Modifier.height(10.dp))
-                ObraCard("Alternativa 4", "Vorem ipsum dolor sit amet, consectetur adipiscing elit.")
+                ObraCard("Obra 4", "Vorem ipsum dolor sit amet, consectetur adipiscing elit.")
             }
 
             Spacer(Modifier.height(20.dp))
@@ -98,7 +103,10 @@ fun ObraCard(title: String, subtitle: String) {
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(120.dp)
-                    .background(Color.DarkGray, shape = RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp))
+                    .background(
+                        Color.DarkGray,
+                        shape = RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp)
+                    )
             )
 
             // Coluna com título e subtítulo à direita
