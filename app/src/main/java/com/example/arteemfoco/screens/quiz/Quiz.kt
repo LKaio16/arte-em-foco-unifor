@@ -51,7 +51,7 @@ fun QuizScreen(navController: NavController) {
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 10.dp) // Adiciona espaço suficiente para o título
+                .padding(top = 0.dp) // Adiciona espaço suficiente para o título
         ) {
             // Imagem
             Box(
