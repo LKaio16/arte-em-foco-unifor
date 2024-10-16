@@ -73,7 +73,7 @@ class MainActivity : ComponentActivity() {
             ArteEmFocoTheme {
 
                 val colorPrimary = MaterialTheme.colorScheme.primary
-                window.navigationBarColor = Purple80.toArgb()
+//                window.navigationBarColor = Purple80.toArgb()
 
                 NavHost(navController = navController, startDestination = "startScreen") {
                     // Navegação para as telas sem BottomBar

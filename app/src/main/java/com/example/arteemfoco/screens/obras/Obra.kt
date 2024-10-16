@@ -4,12 +4,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.FloatingActionButton
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Icon
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Chat
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -78,6 +81,7 @@ fun ObraScreen(navController: NavController) {
             }
 
             Spacer(Modifier.height(20.dp))
+
         }
     }
 }
@@ -93,16 +97,16 @@ fun ObraScreenPreview() {
 fun ObraCard(title: String, subtitle: String) {
     Box(
         modifier = Modifier
-            .width(300.dp)
+            .width(350.dp)
             .background(Color.Gray, shape = RoundedCornerShape(16.dp))
-            .height(100.dp)
+            .height(120.dp)
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             // Caixa escura à esquerda
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .width(120.dp)
+                    .width(140.dp)
                     .background(
                         Color.DarkGray,
                         shape = RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp)
@@ -119,8 +123,10 @@ fun ObraCard(title: String, subtitle: String) {
             ) {
                 Text(text = title, fontSize = 15.sp, color = Color.White)
                 Spacer(Modifier.height(2.dp))
-                Text(text = subtitle, fontSize = 11.sp, color = Color.White)
+                Text(text = subtitle, fontSize = 11.sp, color = Color.White, modifier = Modifier.width(170.dp))
             }
         }
+
+
     }
 }

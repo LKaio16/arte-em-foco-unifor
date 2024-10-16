@@ -1,6 +1,8 @@
 package com.example.arteemfoco
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Apps
+import androidx.compose.material.icons.filled.AutoAwesomeMosaic
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
@@ -11,21 +13,22 @@ sealed class BottomBarScreen(
     val title: String,
     val icon: ImageVector
 ) {
-    object Home : BottomBarScreen(
-        route = "home",
-        title = "Home",
-        icon = Icons.Default.Home
+    object Quiz : BottomBarScreen(
+        route = "quizAdmin",
+        title = "Quiz",
+        icon = Icons.Default.Apps
     )
 
-    object Profile : BottomBarScreen(
-        route = "profile",
-        title = "Profile",
-        icon = Icons.Default.Person
+    object Obras : BottomBarScreen(
+        route = "obraAdmin",
+        title = "Obras",
+        icon = Icons.Default.AutoAwesomeMosaic
     )
 
-    object Settings : BottomBarScreen(
-        route = "settings",
-        title = "Settings",
-        icon = Icons.Default.Settings
-    )
+//    object Settings : BottomBarScreen(
+//        route = "settings",
+//        title = "Settings",
+//        icon = Icons.Default.Settings
+//    )
+
 }

@@ -120,7 +120,7 @@ fun ObraViewScreen(navController: NavController) {
             backgroundColor = Color.Gray,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(30.dp) // Padding para afastar do canto
+                .padding(bottom = 50.dp, end = 20.dp) // Padding para afastar do canto
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.Chat,

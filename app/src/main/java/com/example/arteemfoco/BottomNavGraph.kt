@@ -7,25 +7,25 @@ import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.arteemfoco.screens.HomeScreen
-import com.example.arteemfoco.screens.ProfileScreen
+import com.example.arteemfoco.screens.ObraAdminScreen
+import com.example.arteemfoco.screens.QuizAdminScreen
 import com.example.arteemfoco.screens.SettingsScreen
 
 @Composable
 fun BottomNavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
     NavHost(
         navController = navController,
-        startDestination = BottomBarScreen.Home.route,
+        startDestination = BottomBarScreen.Quiz.route,
         modifier = modifier
     ) {
-        composable(route = BottomBarScreen.Home.route) {
-            HomeScreen()
+        composable(route = BottomBarScreen.Quiz.route) {
+            QuizAdminScreen()
         }
-        composable(route = BottomBarScreen.Profile.route) {
-            ProfileScreen()
+        composable(route = BottomBarScreen.Obras.route) {
+            ObraAdminScreen()
         }
-        composable(route = BottomBarScreen.Settings.route) {
-            SettingsScreen()
-        }
+//        composable(route = BottomBarScreen.Settings.route) {
+//            SettingsScreen()
+//        }
     }
 }
