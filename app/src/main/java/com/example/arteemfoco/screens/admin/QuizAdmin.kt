@@ -1,4 +1,4 @@
-package com.example.arteemfoco.screens
+package com.example.arteemfoco.screens.admin
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -23,17 +22,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.arteemfoco.screens.obras.ObraCard
 
 @Composable
-    fun ObraAdminScreen() {
+fun QuizAdminScreen(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White) // Fundo branco para toda a tela
     ) {
         Text(
-            text = "Obra",
+            text = "Quiz",
             fontSize = 19.sp,
             fontWeight = FontWeight.Bold,
             color = Color.Black,
@@ -54,18 +55,18 @@ import com.example.arteemfoco.screens.obras.ObraCard
                 modifier = Modifier.clickable { },
                 verticalArrangement = Arrangement.spacedBy(3.dp)
             ) {
-                ObraCard("Obra 1", "Vorem ipsum dolor sit amet, consectetur adipiscing elit.")
+                ObraCard("Quiz 1", "Vorem ipsum dolor sit amet, consectetur adipiscing elit.")
                 Spacer(Modifier.height(10.dp))
-                ObraCard("Obra 2", "Vorem ipsum dolor sit amet, consectetur adipiscing elit.")
+                ObraCard("Quiz 2", "Vorem ipsum dolor sit amet, consectetur adipiscing elit.")
                 Spacer(Modifier.height(10.dp))
-                ObraCard("Obra 3", "Vorem ipsum dolor sit amet, consectetur adipiscing elit.")
+                ObraCard("Quiz 3", "Vorem ipsum dolor sit amet, consectetur adipiscing elit.")
                 Spacer(Modifier.height(10.dp))
-                ObraCard("Obra 4", "Vorem ipsum dolor sit amet, consectetur adipiscing elit.")
+                ObraCard("Quiz 4", "Vorem ipsum dolor sit amet, consectetur adipiscing elit.")
             }
         }
 
         FloatingActionButton(
-            onClick = { /* Ação ao clicar no botão */ },
+            onClick = { navController.navigate("quizAddAdminScreen") },
             backgroundColor = Color.Gray,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -81,8 +82,10 @@ import com.example.arteemfoco.screens.obras.ObraCard
     }
 }
 
-@Composable
 @Preview
-fun ObraAdminScreenPreview() {
-    ObraAdminScreen()
+@Composable
+private fun QuizAdminPreview() {
+    val navController = rememberNavController()
+    QuizAdminScreen(navController)
 }
+

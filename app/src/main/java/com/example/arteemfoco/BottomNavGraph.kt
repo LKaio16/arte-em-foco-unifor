@@ -1,15 +1,16 @@
 package com.example.arteemfoco
 
-import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.arteemfoco.screens.ObraAdminScreen
-import com.example.arteemfoco.screens.QuizAdminScreen
-import com.example.arteemfoco.screens.SettingsScreen
+import com.example.arteemfoco.screens.admin.ObraAddAdminScreen
+import com.example.arteemfoco.screens.admin.ObraAdminScreen
+import com.example.arteemfoco.screens.admin.QuizAddAdminScreen
+import com.example.arteemfoco.screens.admin.QuizAddPerguntaAdminScreen
+import com.example.arteemfoco.screens.admin.QuizAdminScreen
+import com.example.arteemfoco.ui.theme.ArteEmFocoTheme
 
 @Composable
 fun BottomNavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
@@ -19,11 +20,15 @@ fun BottomNavGraph(navController: NavHostController, modifier: Modifier = Modifi
         modifier = modifier
     ) {
         composable(route = BottomBarScreen.Quiz.route) {
-            QuizAdminScreen()
+            QuizAdminScreen(navController)
         }
         composable(route = BottomBarScreen.Obras.route) {
-            ObraAdminScreen()
+            ObraAdminScreen(navController)
         }
+
+        composable("quizAddAdminScreen") { QuizAddAdminScreen(navController) }
+        composable("quizAddPerguntaAdminScreen") { QuizAddPerguntaAdminScreen(navController) }
+        composable("obraAddAdminScreen") { ObraAddAdminScreen(navController) }
 //        composable(route = BottomBarScreen.Settings.route) {
 //            SettingsScreen()
 //        }

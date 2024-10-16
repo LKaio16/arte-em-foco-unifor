@@ -50,6 +50,10 @@ import androidx.navigation.compose.rememberNavController
 import com.example.arteemfoco.screens.LoginScreen
 import com.example.arteemfoco.screens.RegisterScreen
 import com.example.arteemfoco.screens.StartScreen
+import com.example.arteemfoco.screens.admin.ObraAddAdminScreen
+import com.example.arteemfoco.screens.admin.ObraAdminScreen
+import com.example.arteemfoco.screens.admin.QuizAddAdminScreen
+import com.example.arteemfoco.screens.admin.QuizAddPerguntaAdminScreen
 import com.example.arteemfoco.screens.obras.ObraScreen
 import com.example.arteemfoco.screens.obras.ObraViewScreen
 import com.example.arteemfoco.screens.quiz.QuizEndScreen
@@ -71,14 +75,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             val navController = rememberNavController()
             ArteEmFocoTheme {
-
-                val colorPrimary = MaterialTheme.colorScheme.primary
-//                window.navigationBarColor = Purple80.toArgb()
-
                 NavHost(navController = navController, startDestination = "startScreen") {
-                    // Navegação para as telas sem BottomBar
+                    // Navegação para as telas
                     composable("startScreen") { StartScreen(navController) }
-                    composable("tela2") { tela2(navController) }
                     composable("loginScreen") { LoginScreen(navController) }
                     composable("registerScreen") { RegisterScreen(navController) }
                     composable("quizEnterCodeScreen") { QuizEnterCodeScreen(navController) }
@@ -88,31 +87,16 @@ class MainActivity : ComponentActivity() {
                     composable("obraScreen") { ObraScreen(navController) }
                     composable("obraViewScreen") { ObraViewScreen(navController) }
 
+                    // Telas Admin
+                    composable("obraAdminScreen") { ObraAdminScreen(navController) }
+                    composable("quizAddAdminScreen") { QuizAddAdminScreen(navController) }
+                    composable("quizAddPerguntaAdminScreen") { QuizAddPerguntaAdminScreen(navController) }
+                    composable("obraAddAdminScreen") { ObraAddAdminScreen(navController) }
 
                     // Navegação para a MainScreen (com BottomBar)
                     composable("mainScreen") { MainScreen() }
-
                 }
             }
-        }
-    }
-}
-
-
-@Composable
-fun tela2(navController: NavController) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Text(text = "Tela 2")
-        Button(onClick = { navController.navigate("tela1") }) {
-            Text("Voltar para Tela 1")
-        }
-        // Botão para navegar para a MainScreen (com BottomBar)
-        Button(onClick = { navController.navigate("mainScreen") }) {
-            Text("Ir para MainScreen")
         }
     }
 }
@@ -187,6 +171,6 @@ fun LabelInput(text: String) {
 
 @Preview
 @Composable
-private fun CuPreview() {
+private fun APreview() {
     CaixaTexto("Aaaa")
 }
