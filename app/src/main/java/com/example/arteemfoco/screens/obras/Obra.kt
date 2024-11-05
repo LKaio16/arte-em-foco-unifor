@@ -4,17 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.FloatingActionButton
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Icon
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.Chat
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,15 +19,42 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.firestore.FirebaseFirestore
+import android.util.Log
+
+data class Obra(
+    val title: String = "",
+    val description: String = ""
+)
 
 @Composable
 fun ObraScreen(navController: NavController) {
+    val db = FirebaseFirestore.getInstance()
+    var obras by remember { mutableStateOf(listOf<Obra>()) }
+
+    // Busca as obras no Firestore
+    LaunchedEffect(Unit) {
+        db.collection("obras")
+            .get()
+            .addOnSuccessListener { result ->
+                val obrasList = result.map { document ->
+                    Obra(
+                        title = document.getString("title") ?: "",
+                        description = document.getString("description") ?: ""
+                    )
+                }
+                obras = obrasList
+            }
+            .addOnFailureListener { exception ->
+                Log.w("Firestore", "Erro ao buscar obras: ", exception)
+            }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White) // Fundo branco para toda a tela
+            .background(Color.White)
     ) {
-
         Box(
             modifier = Modifier.padding(start = 17.dp, top = 37.dp),
             contentAlignment = Alignment.BottomEnd
@@ -47,8 +68,6 @@ fun ObraScreen(navController: NavController) {
             )
         }
 
-
-
         Text(
             text = "Obras",
             fontSize = 19.sp,
@@ -60,28 +79,17 @@ fun ObraScreen(navController: NavController) {
             textAlign = TextAlign.Center
         )
 
-
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxSize()
         ) {
-
-            Column(
-                modifier = Modifier.clickable { navController.navigate("obraViewScreen") },
-                verticalArrangement = Arrangement.spacedBy(3.dp)
-            ) {
-                ObraCard("Obra 1", "Vorem ipsum dolor sit amet, consectetur adipiscing elit.")
+            obras.forEach { obra ->
+                ObraCard(title = obra.title, subtitle = obra.description)
                 Spacer(Modifier.height(10.dp))
-                ObraCard("Obra 2", "Vorem ipsum dolor sit amet, consectetur adipiscing elit.")
-                Spacer(Modifier.height(10.dp))
-                ObraCard("Obra 3", "Vorem ipsum dolor sit amet, consectetur adipiscing elit.")
-                Spacer(Modifier.height(10.dp))
-                ObraCard("Obra 4", "Vorem ipsum dolor sit amet, consectetur adipiscing elit.")
             }
 
             Spacer(Modifier.height(20.dp))
-
         }
     }
 }
@@ -126,7 +134,5 @@ fun ObraCard(title: String, subtitle: String) {
                 Text(text = subtitle, fontSize = 11.sp, color = Color.White, modifier = Modifier.width(170.dp))
             }
         }
-
-
     }
 }

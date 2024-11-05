@@ -67,6 +67,7 @@ dependencies {
     implementation (libs.androidx.material)
     implementation (libs.androidx.material.icons.extended)
     implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.firestore.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

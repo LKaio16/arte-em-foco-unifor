@@ -25,6 +25,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.arteemfoco.screens.quiz.Alternative
 import com.example.arteemfoco.screens.quiz.QuizScreen
 
+
 @Composable
 fun QuizAddAdminScreen(navController: NavController) {
     Box(
@@ -140,13 +141,6 @@ fun QuizAddAdminScreen(navController: NavController) {
             }
         }
     }
-}
-
-@Preview
-@Composable
-private fun QuizAddAdminPreview() {
-    val navController = rememberNavController()
-    QuizAddAdminScreen(navController)
 }
 
 

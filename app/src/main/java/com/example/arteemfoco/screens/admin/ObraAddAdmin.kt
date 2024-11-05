@@ -6,12 +6,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,15 +21,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.arteemfoco.screens.quiz.Alternative
-import com.example.arteemfoco.screens.quiz.QuizScreen
+import com.google.firebase.firestore.FirebaseFirestore
+import android.util.Log
+import com.example.arteemfoco.screens.obras.Obra
 
 @Composable
 fun ObraAddAdminScreen(navController: NavController) {
+    // Estado para os campos de entrada
+    var title by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
+    var audioDescription by remember { mutableStateOf("") }
+
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White) // Fundo branco para toda a tela
+            .background(Color.White)
     ) {
         // Ícone de voltar no canto superior esquerdo
         Box(
@@ -76,7 +82,7 @@ fun ObraAddAdminScreen(navController: NavController) {
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 0.dp) // Adiciona espaço suficiente para o título
+                .padding(top = 0.dp)
         ) {
             // Imagem
             Box(
@@ -87,43 +93,45 @@ fun ObraAddAdminScreen(navController: NavController) {
 
             Spacer(Modifier.height(16.dp))
 
-            // Labels e Caixas de Texto
+            // Campo de Título
             Text(text = "Título", fontSize = 16.sp, fontWeight = FontWeight.Bold)
             Spacer(Modifier.height(8.dp))
-
-            // Simulação de uma caixa de texto
-            Box(
+            TextField(
+                value = title,
+                onValueChange = { title = it },
                 modifier = Modifier
                     .background(Color.LightGray)
-                    .size(300.dp, 40.dp)
+                    .size(300.dp, 56.dp),
+                placeholder = { Text("Digite o título") }
             )
 
             Spacer(Modifier.height(16.dp))
 
+            // Campo de Descrição
             Text(text = "Descrição", fontSize = 16.sp, fontWeight = FontWeight.Bold)
             Spacer(Modifier.height(8.dp))
-
-            // Simulação de um dropdown
-            Box(
+            TextField(
+                value = description,
+                onValueChange = { description = it },
                 modifier = Modifier
                     .background(Color.LightGray)
-                    .size(300.dp, 40.dp)
+                    .size(300.dp, 56.dp),
+                placeholder = { Text("Digite a descrição") }
             )
 
             Spacer(Modifier.height(16.dp))
 
+            // Campo de Audio-Descrição
             Text(text = "Audio-Descrição", fontSize = 16.sp, fontWeight = FontWeight.Bold)
             Spacer(Modifier.height(8.dp))
-
-
-            Box(
+            TextField(
+                value = audioDescription,
+                onValueChange = { audioDescription = it },
                 modifier = Modifier
                     .background(Color.LightGray)
-                    .size(300.dp, 100.dp)
+                    .size(300.dp, 100.dp),
+                placeholder = { Text("Digite a audio-descrição") }
             )
-
-
-
         }
 
         // Botão de "Adicionar Obra"
@@ -134,7 +142,28 @@ fun ObraAddAdminScreen(navController: NavController) {
             contentAlignment = Alignment.BottomEnd
         ) {
             Button(
-                onClick = {  navController.popBackStack() }
+                onClick = {
+                    val db = FirebaseFirestore.getInstance()
+                    val obra = hashMapOf(
+                        "title" to title,
+                        "description" to description,
+                        "audioDescription" to audioDescription
+                    )
+
+                    db.collection("obras").add(obra)
+                        .addOnSuccessListener { documentReference ->
+                            Log.d("Firestore", "Obra adicionada com ID: ${documentReference.id}")
+
+                            title = ""
+                            description = ""
+                            audioDescription = ""
+
+                            navController.popBackStack() // Navega de volta após adicionar
+                        }
+                        .addOnFailureListener { e ->
+                            Log.w("Firestore", "Erro ao adicionar obra", e)
+                        }
+                }
             ) {
                 Text(text = "Adicionar Obra")
             }
@@ -142,11 +171,9 @@ fun ObraAddAdminScreen(navController: NavController) {
     }
 }
 
-
 @Composable
 @Preview
 fun ObraAddAdminScreenPreview() {
     val navController = rememberNavController()
     ObraAddAdminScreen(navController)
 }
-
