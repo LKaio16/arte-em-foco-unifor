@@ -6,15 +6,24 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.FloatingActionButton
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Icon
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -36,12 +45,12 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 data class Obra(
     val title: String = "",
-    val description: String = ""
+    val description: String = "",
 )
 
 
 @Composable
-    fun ObraAdminScreen(navController: NavController) {
+fun ObraAdminScreen(navController: NavController) {
     val db = FirebaseFirestore.getInstance()
     var obras by remember { mutableStateOf(listOf<Obra>()) }
 
@@ -85,7 +94,7 @@ data class Obra(
             modifier = Modifier.fillMaxSize()
         ) {
             obras.forEach { obra ->
-                ObraCard(title = obra.title, subtitle = obra.description)
+                ObraCardAdmin(title = obra.title, subtitle = obra.description)
                 Spacer(Modifier.height(10.dp))
             }
 
@@ -113,5 +122,65 @@ data class Obra(
 @Preview
 fun ObraAdminScreenPreview() {
     val navController = rememberNavController()
-    ObraAdminScreen(navController)
+    ObraCardAdmin("af", "asdasd")
+}
+
+
+@Composable
+fun ObraCardAdmin(title: String, subtitle: String) {
+    Box(
+        modifier = Modifier
+            .width(350.dp)
+            .background(Color.Gray, shape = RoundedCornerShape(16.dp))
+            .height(120.dp)
+    ) {
+        Row(modifier = Modifier.fillMaxSize()) {
+            // Caixa escura à esquerda
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(140.dp)
+                    .background(
+                        Color.Red,
+                        shape = RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp)
+                    )
+            )
+
+            // Coluna com título e subtítulo à direita
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(start = 16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(text = title, fontSize = 15.sp, color = Color.White)
+                Spacer(Modifier.height(2.dp))
+                Text(
+                    text = subtitle,
+                    fontSize = 11.sp,
+                    color = Color.White,
+                    modifier = Modifier.width(170.dp)
+                )
+            }
+
+
+
+        }
+
+        Box(
+            modifier = Modifier
+                .background(color = Color.Red)
+                .padding(end = 8.dp, top = 8.dp, start = 5.dp)
+                .align(Alignment.TopEnd)
+
+        ) {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = "Delete",
+                tint = Color.White
+            )
+        }
+
+    }
 }
