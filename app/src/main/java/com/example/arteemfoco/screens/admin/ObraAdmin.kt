@@ -1,5 +1,8 @@
 package com.example.arteemfoco.screens.admin
 
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,14 +15,10 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.FloatingActionButton
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Icon
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -40,10 +39,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.arteemfoco.screens.obras.Obra
-import com.example.arteemfoco.screens.obras.ObraCard
 import com.google.firebase.firestore.FirebaseFirestore
 
 data class Obra(
+    val id: String = "",
     val title: String = "",
     val description: String = "",
 )
@@ -52,7 +51,7 @@ data class Obra(
 @Composable
 fun ObraAdminScreen(navController: NavController) {
     val db = FirebaseFirestore.getInstance()
-    var obras by remember { mutableStateOf(listOf<Obra>()) }
+    var obras by remember { mutableStateOf(listOf<com.example.arteemfoco.screens.admin.Obra>()) }
 
 
     // Busca as obras no Firestore
@@ -61,7 +60,8 @@ fun ObraAdminScreen(navController: NavController) {
             .get()
             .addOnSuccessListener { result ->
                 val obrasList = result.map { document ->
-                    Obra(
+                    com.example.arteemfoco.screens.admin.Obra(
+                        id = document.id,
                         title = document.getString("title") ?: "",
                         description = document.getString("description") ?: ""
                     )
@@ -94,7 +94,15 @@ fun ObraAdminScreen(navController: NavController) {
             modifier = Modifier.fillMaxSize()
         ) {
             obras.forEach { obra ->
-                ObraCardAdmin(title = obra.title, subtitle = obra.description)
+                ObraCardAdmin(
+                    title = obra.title,
+                    subtitle = obra.description,
+                    obraId = obra.id,
+                    onDelete = { obraId ->
+                        // Atualiza a lista de obras ao remover uma obra
+                        obras = obras.filter { it.id != obraId }
+                    }
+                )
                 Spacer(Modifier.height(10.dp))
             }
 
@@ -122,12 +130,17 @@ fun ObraAdminScreen(navController: NavController) {
 @Preview
 fun ObraAdminScreenPreview() {
     val navController = rememberNavController()
-    ObraCardAdmin("af", "asdasd")
+//    ObraCardAdmin(
+//        "afaaaaaaaaaaaaaa",
+//        "asdasdaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+//    )
 }
 
 
 @Composable
-fun ObraCardAdmin(title: String, subtitle: String) {
+fun ObraCardAdmin(title: String, subtitle: String, obraId: String, onDelete: (String) -> Unit) {
+    val db = FirebaseFirestore.getInstance()
+
     Box(
         modifier = Modifier
             .width(350.dp)
@@ -141,7 +154,7 @@ fun ObraCardAdmin(title: String, subtitle: String) {
                     .fillMaxHeight()
                     .width(140.dp)
                     .background(
-                        Color.Red,
+                        Color.Blue,
                         shape = RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp)
                     )
             )
@@ -150,7 +163,7 @@ fun ObraCardAdmin(title: String, subtitle: String) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(start = 16.dp),
+                    .padding(start = 16.dp, end = 35.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.Start
             ) {
@@ -165,15 +178,26 @@ fun ObraCardAdmin(title: String, subtitle: String) {
             }
 
 
-
         }
 
         Box(
             modifier = Modifier
-                .background(color = Color.Red)
                 .padding(end = 8.dp, top = 8.dp, start = 5.dp)
-                .align(Alignment.TopEnd)
-
+                .align(Alignment.CenterEnd)
+                .clickable {
+                    // Exclui a obra do Firestore
+                    db
+                        .collection("obras")
+                        .document(obraId)
+                        .delete()
+                        .addOnSuccessListener {
+                            Log.d("Firestore", "Obra excluída com sucesso!")
+                            onDelete(obraId) // Atualiza a lista de obras na tela
+                        }
+                        .addOnFailureListener { e ->
+                            Log.w("Firestore", "Erro ao excluir obra", e)
+                        }
+                }
         ) {
             Icon(
                 imageVector = Icons.Default.Delete,
