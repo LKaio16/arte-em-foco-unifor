@@ -29,6 +29,7 @@ import com.example.arteemfoco.screens.obras.Obra
 fun ObraAddAdminScreen(navController: NavController) {
     // Estado para os campos de entrada
     var title by remember { mutableStateOf("") }
+    var author by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var audioDescription by remember { mutableStateOf("") }
 
@@ -91,6 +92,7 @@ fun ObraAddAdminScreen(navController: NavController) {
                     .size(300.dp, 150.dp)
             )
 
+
             Spacer(Modifier.height(16.dp))
 
             // Campo de Título
@@ -103,6 +105,20 @@ fun ObraAddAdminScreen(navController: NavController) {
                     .background(Color.LightGray)
                     .size(300.dp, 56.dp),
                 placeholder = { Text("Digite o título") }
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            // Campo de Autor
+            Text(text = "Autor", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Spacer(Modifier.height(8.dp))
+            TextField(
+                value = author,
+                onValueChange = { author = it },
+                modifier = Modifier
+                    .background(Color.LightGray)
+                    .size(300.dp, 56.dp),
+                placeholder = { Text("Digite o autor") }
             )
 
             Spacer(Modifier.height(16.dp))
@@ -146,6 +162,7 @@ fun ObraAddAdminScreen(navController: NavController) {
                     val db = FirebaseFirestore.getInstance()
                     val obra = hashMapOf(
                         "title" to title,
+                        "author" to author,
                         "description" to description,
                         "audioDescription" to audioDescription
                     )
@@ -155,6 +172,7 @@ fun ObraAddAdminScreen(navController: NavController) {
                             Log.d("Firestore", "Obra adicionada com ID: ${documentReference.id}")
 
                             title = ""
+                            author = ""
                             description = ""
                             audioDescription = ""
 

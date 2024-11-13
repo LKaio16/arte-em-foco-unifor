@@ -44,7 +44,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 data class Obra(
     val id: String = "",
     val title: String = "",
-    val description: String = "",
+    val author: String = "",
 )
 
 
@@ -63,7 +63,7 @@ fun ObraAdminScreen(navController: NavController) {
                     com.example.arteemfoco.screens.admin.Obra(
                         id = document.id,
                         title = document.getString("title") ?: "",
-                        description = document.getString("description") ?: ""
+                        author = document.getString("author") ?: ""
                     )
                 }
                 obras = obrasList
@@ -96,7 +96,7 @@ fun ObraAdminScreen(navController: NavController) {
             obras.forEach { obra ->
                 ObraCardAdmin(
                     title = obra.title,
-                    subtitle = obra.description,
+                    author = obra.author,
                     obraId = obra.id,
                     onDelete = { obraId ->
                         // Atualiza a lista de obras ao remover uma obra
@@ -138,7 +138,7 @@ fun ObraAdminScreenPreview() {
 
 
 @Composable
-fun ObraCardAdmin(title: String, subtitle: String, obraId: String, onDelete: (String) -> Unit) {
+fun ObraCardAdmin(title: String, author: String, obraId: String, onDelete: (String) -> Unit) {
     val db = FirebaseFirestore.getInstance()
 
     Box(
@@ -170,7 +170,7 @@ fun ObraCardAdmin(title: String, subtitle: String, obraId: String, onDelete: (St
                 Text(text = title, fontSize = 15.sp, color = Color.White)
                 Spacer(Modifier.height(2.dp))
                 Text(
-                    text = subtitle,
+                    text = author,
                     fontSize = 11.sp,
                     color = Color.White,
                     modifier = Modifier.width(170.dp)
