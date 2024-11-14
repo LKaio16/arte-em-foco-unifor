@@ -17,8 +17,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.FloatingActionButton
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Icon
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -99,7 +102,6 @@ fun ObraAdminScreen(navController: NavController) {
                     author = obra.author,
                     obraId = obra.id,
                     onDelete = { obraId ->
-                        // Atualiza a lista de obras ao remover uma obra
                         obras = obras.filter { it.id != obraId }
                     }
                 )
