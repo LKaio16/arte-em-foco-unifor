@@ -27,6 +27,7 @@ import com.example.arteemfoco.screens.obras.Obra
 
 @Composable
 fun ObraAddAdminScreen(navController: NavController) {
+
     // Estado para os campos de entrada
     var title by remember { mutableStateOf("") }
     var author by remember { mutableStateOf("") }

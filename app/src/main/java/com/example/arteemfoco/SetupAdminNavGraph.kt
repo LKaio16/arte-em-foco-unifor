@@ -22,9 +22,9 @@ import com.example.arteemfoco.screens.quiz.QuizEnterNameScreen
 import com.example.arteemfoco.screens.quiz.QuizScreen
 
 @Composable
-fun SetupNavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
+fun SetupNavGraph2(navController: NavHostController, modifier: Modifier = Modifier) {
 
-    NavHost(navController = navController, startDestination = Screen.Start.route) {
+    NavHost(navController = navController, startDestination = Screen.QuizAdmin.route) {
         composable(Screen.Start.route) { StartScreen(navController) }
         composable(Screen.Login.route) { LoginScreen(navController) }
         composable(Screen.Register.route) { RegisterScreen(navController) }

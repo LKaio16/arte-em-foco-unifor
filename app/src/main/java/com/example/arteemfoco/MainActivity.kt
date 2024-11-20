@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.arteemfoco.ui.theme.ArteEmFocoTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,17 +39,25 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         enableEdgeToEdge()
+
         setContent {
             ArteEmFocoTheme {
+                // Crie e configure o NavController aqui
                 val navController = rememberNavController()
+
+                // Deve-se definir o ViewModelStore antes de configurar o NavGraph
+                navController.setViewModelStore(viewModelStore)
+
+                // Somente após configurar o ViewModelStore, configure o NavGraph
                 SetupNavGraph(navController = navController)
             }
         }
-
     }
 }
+
+
+
 
 
 @Composable

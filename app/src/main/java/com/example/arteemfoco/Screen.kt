@@ -14,10 +14,13 @@ sealed class Screen(val route: String) {
 
     // Telas Admin
     object ObraAdmin : Screen("obraAdminScreen")
+    object QuizAdmin : Screen("quizAdminScreen")
     object QuizAddAdmin : Screen("quizAddAdminScreen")
     object QuizAddPerguntaAdmin : Screen("quizAddPerguntaAdminScreen")
     object ObraAddAdmin : Screen("obraAddAdminScreen")
 
     // Tela Principal (MainScreen) com BottomBar
     object Main : Screen("mainScreen")
+
+
 }

@@ -40,7 +40,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.arteemfoco.AdminScreenScaffold
+import com.example.arteemfoco.Screen
 import com.example.arteemfoco.screens.obras.Obra
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -52,79 +55,82 @@ data class Obra(
 
 
 @Composable
-fun ObraAdminScreen(navController: NavController) {
-    val db = FirebaseFirestore.getInstance()
-    var obras by remember { mutableStateOf(listOf<com.example.arteemfoco.screens.admin.Obra>()) }
+fun ObraAdminScreen(navController: NavHostController) {
+    AdminScreenScaffold(navController) { innerPadding ->
+        val db = FirebaseFirestore.getInstance()
+        var obras by remember { mutableStateOf(listOf<com.example.arteemfoco.screens.admin.Obra>()) }
 
 
-    // Busca as obras no Firestore
-    LaunchedEffect(Unit) {
-        db.collection("obras")
-            .get()
-            .addOnSuccessListener { result ->
-                val obrasList = result.map { document ->
-                    com.example.arteemfoco.screens.admin.Obra(
-                        id = document.id,
-                        title = document.getString("title") ?: "",
-                        author = document.getString("author") ?: ""
-                    )
-                }
-                obras = obrasList
-            }
-            .addOnFailureListener { exception ->
-                Log.w("Firestore", "Erro ao buscar obras: ", exception)
-            }
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White) // Fundo branco para toda a tela
-    ) {
-        Text(
-            text = "Obra",
-            fontSize = 19.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black,
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 40.dp) // Espaçamento do topo
-        )
-
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            obras.forEach { obra ->
-                ObraCardAdmin(
-                    title = obra.title,
-                    author = obra.author,
-                    obraId = obra.id,
-                    onDelete = { obraId ->
-                        obras = obras.filter { it.id != obraId }
+        // Busca as obras no Firestore
+        LaunchedEffect(Unit) {
+            db.collection("obras")
+                .get()
+                .addOnSuccessListener { result ->
+                    val obrasList = result.map { document ->
+                        com.example.arteemfoco.screens.admin.Obra(
+                            id = document.id,
+                            title = document.getString("title") ?: "",
+                            author = document.getString("author") ?: ""
+                        )
                     }
+                    obras = obrasList
+                }
+                .addOnFailureListener { exception ->
+                    Log.w("Firestore", "Erro ao buscar obras: ", exception)
+                }
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+                .padding(innerPadding)  // Aplicar o padding fornecido pelo Scaffold aqui
+        )  {
+            Text(
+                text = "Obra",
+                fontSize = 19.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = 40.dp) // Espaçamento do topo
+            )
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                obras.forEach { obra ->
+                    ObraCardAdmin(
+                        title = obra.title,
+                        author = obra.author,
+                        obraId = obra.id,
+                        onDelete = { obraId ->
+                            obras = obras.filter { it.id != obraId }
+                        }
+                    )
+                    Spacer(Modifier.height(10.dp))
+                }
+
+                Spacer(Modifier.height(20.dp))
+            }
+            // Botão flutuante deve ser colocado fora da Column para evitar que seja empurrado pela lista
+            FloatingActionButton(
+                onClick = { navController.navigate(Screen.ObraAddAdmin.route) },
+                backgroundColor = Color.Gray,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(bottom = 16.dp, end = 16.dp)  // Ajuste este padding para evitar a BottomBar
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add",
+                    tint = Color.White
                 )
-                Spacer(Modifier.height(10.dp))
             }
 
-            Spacer(Modifier.height(20.dp))
         }
-
-        FloatingActionButton(
-            onClick = { navController.navigate("obraAddAdminScreen") },
-            backgroundColor = Color.Gray,
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(bottom = 50.dp, end = 20.dp) // Padding para afastar do canto
-        ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "Add",
-                tint = Color.White
-            )
-        }
-
     }
 }
 

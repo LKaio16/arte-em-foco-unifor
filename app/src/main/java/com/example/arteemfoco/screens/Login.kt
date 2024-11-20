@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.arteemfoco.CaixaTexto
+import com.example.arteemfoco.Screen
 
 @Composable
 fun LoginScreen(navController: NavController) {
@@ -58,7 +59,15 @@ fun LoginScreen(navController: NavController) {
                 .width(250.dp)
                 .clip(RoundedCornerShape(10.dp))
                 .background(colorPrimary),
-            onClick = { navController.navigate("mainScreen") }) {
+            onClick = {
+                navController.navigate(Screen.Main.route)
+//                    popUpTo(Screen.Start.route) {
+//                        inclusive = true
+                     // Limpa a pilha até StartScreen
+//                    launchSingleTop = true // Garante que MainScreen não seja recriada
+//                }
+            }
+        ) {
             androidx.compose.material3.Text("Entrar")
         }
 
@@ -78,7 +87,9 @@ fun LoginScreen(navController: NavController) {
                 }
             },
             color = Color.Black.copy(alpha = 0.5f), // Reduzir opacidade
-            modifier = Modifier.width(250.dp).clickable { navController.navigate("registerScreen") },
+            modifier = Modifier
+                .width(250.dp)
+                .clickable { navController.navigate("registerScreen") },
             textAlign = TextAlign.End
         )
 
