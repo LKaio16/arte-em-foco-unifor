@@ -3,6 +3,7 @@ package com.example.arteemfoco.screens.admin
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
+import TravelCard
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -46,6 +47,8 @@ import com.example.arteemfoco.AdminScreenScaffold
 import com.example.arteemfoco.Screen
 import com.example.arteemfoco.screens.obras.Obra
 import com.google.firebase.firestore.FirebaseFirestore
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.runtime.*
 
 data class Obra(
     val id: String = "",
@@ -59,7 +62,7 @@ fun ObraAdminScreen(navController: NavHostController) {
     AdminScreenScaffold(navController) { innerPadding ->
         val db = FirebaseFirestore.getInstance()
         var obras by remember { mutableStateOf(listOf<com.example.arteemfoco.screens.admin.Obra>()) }
-
+        var isLoading by remember { mutableStateOf(true) }
 
         // Busca as obras no Firestore
         LaunchedEffect(Unit) {
@@ -74,6 +77,7 @@ fun ObraAdminScreen(navController: NavHostController) {
                         )
                     }
                     obras = obrasList
+                    isLoading = false
                 }
                 .addOnFailureListener { exception ->
                     Log.w("Firestore", "Erro ao buscar obras: ", exception)
@@ -85,7 +89,7 @@ fun ObraAdminScreen(navController: NavHostController) {
                 .fillMaxSize()
                 .background(Color.White)
                 .padding(innerPadding)  // Aplicar o padding fornecido pelo Scaffold aqui
-        )  {
+        ) {
             Text(
                 text = "Obra",
                 fontSize = 19.sp,
@@ -101,19 +105,23 @@ fun ObraAdminScreen(navController: NavHostController) {
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxSize()
             ) {
-                obras.forEach { obra ->
-                    ObraCardAdmin(
-                        title = obra.title,
-                        author = obra.author,
-                        obraId = obra.id,
-                        onDelete = { obraId ->
-                            obras = obras.filter { it.id != obraId }
-                        }
-                    )
-                    Spacer(Modifier.height(10.dp))
-                }
+                if (isLoading) {
+                    CircularProgressIndicator()  // Mostra o indicador de carregamento
+                } else {
+                    obras.forEach { obra ->
+                        ObraCardAdmin(
+                            title = obra.title,
+                            author = obra.author,
+                            obraId = obra.id,
+                            onDelete = { obraId ->
+                                obras = obras.filter { it.id != obraId }
+                            }
+                        )
+                        Spacer(Modifier.height(10.dp))
+                    }
 
-                Spacer(Modifier.height(20.dp))
+                    Spacer(Modifier.height(20.dp))
+                }
             }
             // Botão flutuante deve ser colocado fora da Column para evitar que seja empurrado pela lista
             FloatingActionButton(
@@ -121,7 +129,10 @@ fun ObraAdminScreen(navController: NavHostController) {
                 backgroundColor = Color.Gray,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(bottom = 16.dp, end = 16.dp)  // Ajuste este padding para evitar a BottomBar
+                    .padding(
+                        bottom = 16.dp,
+                        end = 16.dp
+                    )  // Ajuste este padding para evitar a BottomBar
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -133,6 +144,7 @@ fun ObraAdminScreen(navController: NavHostController) {
         }
     }
 }
+
 
 @Composable
 @Preview
