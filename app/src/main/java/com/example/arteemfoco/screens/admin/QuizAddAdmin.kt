@@ -52,12 +52,14 @@ fun QuizAddAdminScreen(navController: NavController) {
         ) {
             // Título do Quiz
             Text("Título do Quiz", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Spacer(Modifier.height(5.dp))
             TextField(value = title, onValueChange = { title = it })
 
             Spacer(Modifier.height(16.dp))
 
             // Descrição de Áudio
             Text("Descrição de Áudio", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Spacer(Modifier.height(5.dp))
             TextField(value = audioDescription, onValueChange = { audioDescription = it })
 
             Spacer(Modifier.height(16.dp))

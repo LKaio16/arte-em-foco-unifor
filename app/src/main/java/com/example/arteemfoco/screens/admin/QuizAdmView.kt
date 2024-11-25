@@ -1,8 +1,13 @@
 package com.example.arteemfoco.screens.admin
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,6 +24,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 fun QuizAdminViewScreen(navController: NavController, quizId: String) {
     var questions by remember { mutableStateOf(listOf<Question>()) }
 
+    // Fetch perguntas do Firebase
     LaunchedEffect(quizId) {
         val db = FirebaseFirestore.getInstance()
         db.collection("quizzes/$quizId/perguntas")
@@ -36,147 +42,92 @@ fun QuizAdminViewScreen(navController: NavController, quizId: String) {
             }
     }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .background(Color.White)
+            .padding(start = 17.dp, top = 37.dp),
     ) {
-        Text(text = "Perguntas para $quizId", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+        // Ícone de voltar no topo esquerdo
+        Icon(
+            imageVector = Icons.Default.ArrowBack,
+            contentDescription = "Voltar",
+            tint = Color.Black,
+            modifier = Modifier
+                .padding(start = 16.dp, top = 16.dp)
+                .clickable { navController.popBackStack() }
+                .size(24.dp)
+        )
 
-        Spacer(Modifier.height(16.dp))
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)) {
+            // Título
+            Text(
+                text = "Visualizar Quiz",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
 
-        questions.forEach { question ->
-            Text(text = "Título: ${question.title}", fontSize = 18.sp)
-            Text(text = "Descrição: ${question.description}", fontSize = 14.sp)
-            Text(text = "Alternativas:", fontSize = 14.sp)
-            question.alternatives.forEachIndexed { index, alternative ->
-                Text(
-                    text = "- ${alternative} ${if (index == question.correctAnswerIndex) "(Correta)" else ""}",
-                    fontSize = 14.sp
-                )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Lista de perguntas
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(questions) { question ->
+                    QuestionCard(question = question)
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
             }
-            Spacer(Modifier.height(16.dp))
         }
 
-        Button(
-            onClick = { navController.navigate("quizAddPerguntaAdminScreen/$quizId") },
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+        // Botão "Adicionar Pergunta" fixado ao final
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .padding(16.dp)
         ) {
-            Text("Adicionar Pergunta")
+            Button(
+                onClick = { navController.navigate("quizAdminScreen/$quizId") },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Adicionar Pergunta")
+            }
         }
     }
 }
 
+@Composable
+fun QuestionCard(question: Question) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.LightGray)
+            .padding(8.dp),
+        elevation = 4.dp
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(text = "Título: ${question.title}", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "Descrição: ${question.description}",
+                fontSize = 14.sp,
+                color = Color.DarkGray
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = "Alternativas:", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+            question.alternatives.forEachIndexed { index, alternative ->
+                Text(
+                    text = "- $alternative ${if (index == question.correctAnswerIndex) "(Correta)" else ""}",
+                    fontSize = 14.sp
+                )
+            }
+        }
+    }
+}
 
-//@Composable
-//fun QuizAdminViewScreen(navController: NavController, quizId: String) {
-//    // Aqui você pode buscar as perguntas e alternativas para o `quizId` do Firestore
-//    var questions by remember { mutableStateOf(listOf<Question>()) }  // Defina o tipo correto para as perguntas
-//
-//    LaunchedEffect(quizId) {
-//        val db = FirebaseFirestore.getInstance()
-//        db.collection("quizzes/$quizId/perguntas")
-//            .get()
-//            .addOnSuccessListener { result ->
-//                val questionsList = result.map { doc ->
-//                    Question(
-//                        title = doc.getString("title") ?: "",
-//                        description = doc.getString("description") ?: "",
-//                        alternatives = doc.get("alternatives") as? List<String> ?: emptyList(),
-//                        correctAnswerIndex = doc.getLong("correctAnswerIndex")?.toInt()
-//                    )
-//                }
-//                questions = questionsList
-//            }
-//    }
-//
-//    Column(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .padding(16.dp)
-//    ) {
-//        Text(text = "Perguntas para $quizId", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-//
-//        Spacer(Modifier.height(16.dp))
-//
-//        questions.forEach { question ->
-//            Text(text = "Título: ${question.title}", fontSize = 18.sp)
-//            Text(text = "Descrição: ${question.description}", fontSize = 14.sp)
-//            Text(text = "Alternativas:", fontSize = 14.sp)
-//            question.alternatives.forEachIndexed { index, alternative ->
-//                Text(
-//                    text = "- ${alternative} ${if (index == question.correctAnswerIndex) "(Correta)" else ""}",
-//                    fontSize = 14.sp
-//                )
-//            }
-//            Spacer(Modifier.height(16.dp))
-//        }
-//
-//        Button(
-//            onClick = { navController.navigate("quizAddPerguntaAdminScreen/$quizId") },
-//            modifier = Modifier.align(Alignment.CenterHorizontally)
-//        ) {
-//            Text("Adicionar Pergunta")
-//        }
-//    }
-//}
-
-//@Composable
-//fun QuizAdminViewScreen(navController: NavController, quizId: String) {
-//    var questions by remember { mutableStateOf(listOf<Map<String, Any>>()) }
-//
-//    LaunchedEffect(quizId) {
-//        val db = FirebaseFirestore.getInstance()
-//        db.collection("quizzes/$quizId/perguntas")
-//            .get()
-//            .addOnSuccessListener { result ->
-//                questions = result.map { doc -> doc.data }
-//            }
-//    }
-//
-//    Box(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .background(Color.White)
-//    ) {
-//        Column(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(16.dp)
-//        ) {
-//            Text(
-//                text = "Detalhes do Quiz",
-//                fontSize = 24.sp,
-//                fontWeight = FontWeight.Bold,
-//                modifier = Modifier.padding(bottom = 16.dp)
-//            )
-//
-//            questions.forEachIndexed { index, question ->
-//                Text(
-//                    text = "Pergunta ${index + 1}: ${question["title"]}",
-//                    fontSize = 20.sp,
-//                    fontWeight = FontWeight.Bold,
-//                    modifier = Modifier.padding(bottom = 8.dp)
-//                )
-//                (question["alternatives"] as? List<String>)?.forEachIndexed { i, alternative ->
-//                    Text(
-//                        text = "Alternativa ${i + 1}: $alternative",
-//                        fontSize = 16.sp,
-//                        modifier = Modifier.padding(start = 16.dp, bottom = 4.dp)
-//                    )
-//                }
-//                Spacer(Modifier.height(16.dp))
-//            }
-//
-//            Button(
-//                onClick = { navController.navigate("quizAddPerguntaAdminScreen/$quizId") },
-//                modifier = Modifier.align(Alignment.CenterHorizontally)
-//            ) {
-//                Text("Adicionar Pergunta")
-//            }
-//        }
-//    }
-//}
 @Preview
 @Composable
 private fun QuizAdminViewPreview() {

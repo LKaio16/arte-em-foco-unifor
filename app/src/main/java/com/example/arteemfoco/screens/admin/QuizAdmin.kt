@@ -94,12 +94,12 @@ fun QuizAdminScreen(navController: NavHostController) {
                         QuizCardAdmin(
                             title = quiz.title,
                             quizId = quiz.id,
-                            onDelete = { quizId ->
-                                quizzes = quizzes.filter { it.id != quizId }
-                            }
+                            onDelete = { quizId -> quizzes = quizzes.filter { it.id != quizId } },
+                            navController = navController
                         )
                         Spacer(Modifier.height(10.dp))
                     }
+
 
 
                     Spacer(Modifier.height(20.dp))
@@ -129,7 +129,7 @@ fun QuizAdminScreen(navController: NavHostController) {
 
 
 @Composable
-fun QuizCardAdmin(title: String, quizId: String, onDelete: (String) -> Unit) {
+fun QuizCardAdmin(title: String, quizId: String, onDelete: (String) -> Unit,navController: NavController) {
     val db = FirebaseFirestore.getInstance()
 
     Box(
@@ -137,6 +137,9 @@ fun QuizCardAdmin(title: String, quizId: String, onDelete: (String) -> Unit) {
             .width(350.dp)
             .background(Color.Gray, shape = RoundedCornerShape(16.dp))
             .height(120.dp)
+            .clickable {
+                navController.navigate("quizViewScreen/$quizId")
+            }
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             // Caixa escura à esquerda

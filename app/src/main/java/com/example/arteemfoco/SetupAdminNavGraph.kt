@@ -16,6 +16,7 @@ import com.example.arteemfoco.screens.admin.ObraAdminScreen
 import com.example.arteemfoco.screens.admin.QuizAdminScreen
 import com.example.arteemfoco.screens.admin.QuizAddAdminScreen
 import com.example.arteemfoco.screens.admin.QuizAddPerguntaAdminScreen
+import com.example.arteemfoco.screens.admin.QuizAdminViewScreen
 import com.example.arteemfoco.screens.obras.ObraScreen
 import com.example.arteemfoco.screens.obras.ObraViewScreen
 import com.example.arteemfoco.screens.quiz.QuizEndScreen
@@ -39,9 +40,11 @@ fun SetupAdminNavGraph(navController: NavHostController, modifier: Modifier = Mo
 
         // Telas Admin
         composable(Screen.ObraAdmin.route) { ObraAdminScreen(navController) }
+        composable(Screen.ObraAddAdmin.route) { ObraAddAdminScreen(navController) }
+
+
         composable(Screen.QuizAdmin.route) { QuizAdminScreen(navController) }
         composable(Screen.QuizAddAdmin.route) { QuizAddAdminScreen(navController) }
-//        composable(Screen.QuizAddPerguntaAdmin.route) { QuizAddPerguntaAdminScreen(navController) }
 
         composable(
             route = "quizAdminScreen/{quizId}",
@@ -53,7 +56,17 @@ fun SetupAdminNavGraph(navController: NavHostController, modifier: Modifier = Mo
             }
         }
 
-        composable(Screen.ObraAddAdmin.route) { ObraAddAdminScreen(navController) }
+        composable(
+            route = "quizViewScreen/{quizId}",
+            arguments = listOf(navArgument("quizId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val quizId = backStackEntry.arguments?.getString("quizId")
+            if (quizId != null) {
+                QuizAdminViewScreen(navController = navController, quizId = quizId)
+            }
+        }
+
+
 
         // Navegação para a MainScreen (com BottomBar)
         composable(Screen.Main.route) { MainScreen() }
