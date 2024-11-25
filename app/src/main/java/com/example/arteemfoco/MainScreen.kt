@@ -10,14 +10,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import bottomNavigationItems
-import com.example.arteemfoco.screens.admin.ObraAdminScreen
-import com.example.arteemfoco.screens.admin.QuizAdminScreen
 
 @Composable
 fun MainScreen() {
@@ -31,7 +27,7 @@ fun MainScreen() {
 
     Scaffold(
     ) { innerPadding ->
-        SetupNavGraph2(navController, modifier = Modifier.padding(innerPadding))
+        SetupAdminNavGraph(navController, modifier = Modifier.padding(innerPadding))
     }
 }
 

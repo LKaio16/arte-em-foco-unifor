@@ -68,7 +68,7 @@ dependencies {
     implementation (libs.androidx.material.icons.extended)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.firestore.ktx)
-    implementation(libs.coil.compose)
+    implementation("io.coil-kt.coil3:coil-compose:3.0.3")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
