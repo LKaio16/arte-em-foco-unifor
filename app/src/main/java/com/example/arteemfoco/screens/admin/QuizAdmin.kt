@@ -12,6 +12,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +25,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.arteemfoco.AdminScreenScaffold
+import com.example.arteemfoco.Screen
 //import com.example.arteemfoco.screens.quizzes.QuizCard
 //import com.example.arteemfoco.screens.quizzes.Quiz
 import com.google.firebase.firestore.FirebaseFirestore
@@ -39,24 +41,28 @@ data class Quiz(
 fun QuizAdminScreen(navController: NavHostController) {
     AdminScreenScaffold(navController) { innerPadding ->
         val db = FirebaseFirestore.getInstance()
-        var quizzes by remember { mutableStateOf(listOf<Quiz>()) }
+        var quizzes by remember { mutableStateOf(listOf<com.example.arteemfoco.screens.admin.Quiz>()) }
+        var isLoading by remember { mutableStateOf(true) }
 
+        // Busca as obras no Firestore
         LaunchedEffect(Unit) {
             db.collection("quizzes")
                 .get()
                 .addOnSuccessListener { result ->
                     val quizzesList = result.map { doc ->
-                        Quiz(
+                        com.example.arteemfoco.screens.admin.Quiz(
                             title = doc.getString("title") ?: "",
                             description = doc.getString("description") ?: "",
                             alternatives = doc.get("alternatives") as? List<String> ?: emptyList(),
                             id = doc.id // Armazenamos o ID aqui
+
                         )
                     }
                     quizzes = quizzesList
+                    isLoading = false
                 }
-                .addOnFailureListener {
-                    // Tratamento de erro, exibir mensagem ao usuário se necessário
+                .addOnFailureListener { exception ->
+                    Log.w("Firestore", "Erro ao buscar quizzes: ", exception)
                 }
         }
 
@@ -64,44 +70,51 @@ fun QuizAdminScreen(navController: NavHostController) {
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.White)
+                .padding(innerPadding)  // Aplicar o padding fornecido pelo Scaffold aqui
         ) {
             Text(
-                text = "Meus Quizzes",
+                text = "Quiz",
                 fontSize = 19.sp,
-                color = Color.Black,
                 fontWeight = FontWeight.Bold,
+                color = Color.Black,
                 modifier = Modifier
                     .align(Alignment.TopCenter)
-                    .padding(top = 70.dp)
+                    .padding(top = 40.dp) // Espaçamento do topo
             )
 
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 100.dp)
+                modifier = Modifier.fillMaxSize()
             ) {
-                quizzes.forEach { quiz ->
-                    QuizCardAdmin(
-                        title = quiz.title,
+                if (isLoading) {
+                    CircularProgressIndicator()  // Mostra o indicador de carregamento
+                } else {
+                    quizzes.forEach { quiz ->
+                        QuizCardAdmin(
+                            title = quiz.title,
+                            quizId = quiz.id,
+                            onDelete = { quizId ->
+                                quizzes = quizzes.filter { it.id != quizId }
+                            }
+                        )
+                        Spacer(Modifier.height(10.dp))
+                    }
 
-                        quizId = quiz.id,
-                        onDelete = { quizId ->
-                            quizzes = quizzes.filter { it.id != quizId }
-                        }
-                    )
-                    Spacer(Modifier.height(10.dp))
+
+                    Spacer(Modifier.height(20.dp))
                 }
-
-                Spacer(Modifier.height(20.dp))
             }
+            // Botão flutuante deve ser colocado fora da Column para evitar que seja empurrado pela lista
             FloatingActionButton(
-                onClick = { navController.navigate("quizAddAdminScreen") },
+                onClick = { navController.navigate(Screen.QuizAddAdmin.route) },
                 backgroundColor = Color.Gray,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(20.dp)
+                    .padding(
+                        bottom = 16.dp,
+                        end = 16.dp
+                    )  // Ajuste este padding para evitar a BottomBar
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -109,9 +122,11 @@ fun QuizAdminScreen(navController: NavHostController) {
                     tint = Color.White
                 )
             }
+
         }
     }
 }
+
 
 @Composable
 fun QuizCardAdmin(title: String, quizId: String, onDelete: (String) -> Unit) {

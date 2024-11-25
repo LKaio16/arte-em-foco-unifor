@@ -12,8 +12,8 @@ import com.example.arteemfoco.screens.StartScreen
 import com.example.arteemfoco.screens.admin.ObraAddAdminScreen
 import com.example.arteemfoco.screens.admin.ObraAdminScreen
 import com.example.arteemfoco.screens.admin.QuizAdminScreen
-import com.example.arteemfoco.screens.salvando.orignial.QuizAddAdminScreen
-import com.example.arteemfoco.screens.salvando.orignial.QuizAddPerguntaAdminScreen
+import com.example.arteemfoco.screens.admin.QuizAddAdminScreen
+import com.example.arteemfoco.screens.admin.QuizAddPerguntaAdminScreen
 import com.example.arteemfoco.screens.obras.ObraScreen
 import com.example.arteemfoco.screens.obras.ObraViewScreen
 import com.example.arteemfoco.screens.quiz.QuizEndScreen
@@ -39,7 +39,7 @@ fun SetupNavGraph(navController: NavHostController, modifier: Modifier = Modifie
         composable(Screen.ObraAdmin.route) { ObraAdminScreen(navController) }
         composable(Screen.QuizAdmin.route) { QuizAdminScreen(navController) }
         composable(Screen.QuizAddAdmin.route) { QuizAddAdminScreen(navController) }
-        composable(Screen.QuizAddPerguntaAdmin.route) { QuizAddPerguntaAdminScreen(navController) }
+//        composable(Screen.QuizAddPerguntaAdmin.route) { QuizAddPerguntaAdminScreen(navController) }
         composable(Screen.ObraAddAdmin.route) { ObraAddAdminScreen(navController) }
 
         // Navegação para a MainScreen (com BottomBar)

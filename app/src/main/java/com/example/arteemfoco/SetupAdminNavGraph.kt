@@ -4,16 +4,18 @@ package com.example.arteemfoco
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.arteemfoco.screens.LoginScreen
 import com.example.arteemfoco.screens.RegisterScreen
 import com.example.arteemfoco.screens.StartScreen
 import com.example.arteemfoco.screens.admin.ObraAddAdminScreen
 import com.example.arteemfoco.screens.admin.ObraAdminScreen
 import com.example.arteemfoco.screens.admin.QuizAdminScreen
-import com.example.arteemfoco.screens.salvando.orignial.QuizAddAdminScreen
-import com.example.arteemfoco.screens.salvando.orignial.QuizAddPerguntaAdminScreen
+import com.example.arteemfoco.screens.admin.QuizAddAdminScreen
+import com.example.arteemfoco.screens.admin.QuizAddPerguntaAdminScreen
 import com.example.arteemfoco.screens.obras.ObraScreen
 import com.example.arteemfoco.screens.obras.ObraViewScreen
 import com.example.arteemfoco.screens.quiz.QuizEndScreen
@@ -22,7 +24,7 @@ import com.example.arteemfoco.screens.quiz.QuizEnterNameScreen
 import com.example.arteemfoco.screens.quiz.QuizScreen
 
 @Composable
-fun SetupNavGraph2(navController: NavHostController, modifier: Modifier = Modifier) {
+fun SetupAdminNavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
 
     NavHost(navController = navController, startDestination = Screen.QuizAdmin.route) {
         composable(Screen.Start.route) { StartScreen(navController) }
@@ -39,7 +41,18 @@ fun SetupNavGraph2(navController: NavHostController, modifier: Modifier = Modifi
         composable(Screen.ObraAdmin.route) { ObraAdminScreen(navController) }
         composable(Screen.QuizAdmin.route) { QuizAdminScreen(navController) }
         composable(Screen.QuizAddAdmin.route) { QuizAddAdminScreen(navController) }
-        composable(Screen.QuizAddPerguntaAdmin.route) { QuizAddPerguntaAdminScreen(navController) }
+//        composable(Screen.QuizAddPerguntaAdmin.route) { QuizAddPerguntaAdminScreen(navController) }
+
+        composable(
+            route = "quizAdminScreen/{quizId}",
+            arguments = listOf(navArgument("quizId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val quizId = backStackEntry.arguments?.getString("quizId")
+            if (quizId != null) {
+                QuizAddPerguntaAdminScreen(navController = navController, quizId = quizId)
+            }
+        }
+
         composable(Screen.ObraAddAdmin.route) { ObraAddAdminScreen(navController) }
 
         // Navegação para a MainScreen (com BottomBar)
