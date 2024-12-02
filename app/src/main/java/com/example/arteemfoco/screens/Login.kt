@@ -47,9 +47,9 @@ fun LoginScreen(navController: NavController) {
             fontWeight = FontWeight.Bold
         )
         Spacer(Modifier.height(10.dp))
-        CaixaTexto("Usuário")
+//        CaixaTexto("Usuário")
         Spacer(Modifier.height(10.dp))
-        CaixaTexto("Senha")
+//        CaixaTexto("Senha")
         Spacer(Modifier.height(20.dp))
         val colorPrimary = androidx.compose.material3.MaterialTheme.colorScheme.primary
 //      teste cor

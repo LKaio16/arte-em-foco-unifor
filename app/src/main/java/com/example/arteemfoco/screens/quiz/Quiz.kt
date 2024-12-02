@@ -1,5 +1,6 @@
 package com.example.arteemfoco.screens.quiz
 
+import QuizViewModel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,121 +12,86 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import com.example.arteemfoco.Screen
+
 
 @Composable
-fun QuizScreen(navController: NavController) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White) // Fundo branco para toda a tela
-    ) {
-        Text(
-            text = "Quiz",
-            fontSize = 19.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black,
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 20.dp) // Espaçamento do topo
-        )
+fun QuizScreen(navController: NavController, quizViewModel: QuizViewModel, quizId: String) {
+    // Carrega o quiz do Firebase ao abrir a tela
+    LaunchedEffect(Unit) {
+        quizViewModel.loadQuiz(quizId)
+    }
 
+    val quiz by quizViewModel.quiz.collectAsState()
+
+    if (quiz != null) {
+        val question = quiz!!.perguntas.firstOrNull() // Exibe a primeira pergunta como exemplo
+        var selectedIndex by remember { mutableStateOf<Int?>(null) } // Armazena o índice da alternativa selecionada
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 0.dp) // Adiciona espaço suficiente para o título
+            modifier = Modifier.fillMaxSize().padding(16.dp)
         ) {
-            // Imagem
-            Box(
-                modifier = Modifier
-                    .background(Color.Gray)
-                    .size(250.dp, 150.dp)
-            )
+            Text(quiz!!.title, fontSize = 24.sp, fontWeight = FontWeight.Bold)
 
-            // Pergunta
-            Column(
-                modifier = Modifier
-                    .width(350.dp)
-                    .padding(16.dp), // Espaçamento interno
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp) // Espaçamento entre os textos
-            ) {
+            if (question != null) {
+                Text(question.title, fontSize = 18.sp, fontWeight = FontWeight.Medium)
 
-                Text(
-                    text = "Pergunta 1",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
-                )
-
-
-                Text(
-                    text = "Autor Genérico",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Normal
-                )
-
-
-                Text(
-                    text = "Korem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis. Class aptent taciti sociosqu ad litora torquent per conubia nostra?",
-                    fontSize = 14.sp, textAlign = TextAlign.Center
-                )
+                question.alternatives.forEachIndexed { index, alternative ->
+                    Alternative(
+                        title = "Alternativa ${index + 1}",
+                        subtitle = alternative,
+                        isSelected = selectedIndex == index, // Verifica se a alternativa foi selecionada
+                        onClick = {
+                            if (selectedIndex == null) { // Só permite clicar se nenhuma alternativa foi selecionada
+                                selectedIndex = index
+                                if (index == question.correctAnswerIndex) {
+                                    // Navegar para a tela final se a resposta estiver certa
+                                    navController.navigate(Screen.QuizEnd.route)
+                                } else {
+                                    // Caso a resposta esteja errada, você pode dar um feedback (exemplo: alterar cor)
+                                }
+                            }
+                        }
+                    )
+                }
             }
-
-            Spacer(Modifier.height(20.dp))
-
-            // Alternativas
-            Column(modifier = Modifier.clickable {navController.navigate("quizEndScreen")  }) {
-                Text(text = "Alternativas", fontWeight = FontWeight.Bold)
-                Spacer(Modifier.height(10.dp))
-                Alternative("Alternativa 1", "Vorem ipsum dolor sit amet, consectetur adipiscing elit.")
-                Spacer(Modifier.height(10.dp))
-                Alternative("Alternativa 2", "Vorem ipsum dolor sit amet, consectetur adipiscing elit.")
-                Spacer(Modifier.height(10.dp))
-                Alternative("Alternativa 3", "Vorem ipsum dolor sit amet, consectetur adipiscing elit.")
-                Spacer(Modifier.height(10.dp))
-                Alternative("Alternativa 4", "Vorem ipsum dolor sit amet, consectetur adipiscing elit.")
-            }
-
-            Spacer(Modifier.height(20.dp))
         }
+    } else {
+        Text("Carregando...")
     }
 }
 
 @Composable
-@Preview
-fun QuizScreenPreview() {
-    val navController = rememberNavController()
-    QuizScreen(navController)
-}
-
-@Composable
-fun Alternative(title: String, subtitle: String) {
+fun Alternative(title: String, subtitle: String, isSelected: Boolean, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .width(300.dp) // Largura total da caixa principal
             .background(
-                Color.Gray,
+                if (isSelected) Color.Green else Color.Gray, // Alterar a cor quando selecionado
                 shape = RoundedCornerShape(16.dp)
             )
             .height(70.dp)
+            .clickable { onClick() } // Adiciona a ação de clique
     ) {
         Row(
             modifier = Modifier.fillMaxSize() // Preencher a caixa cinza
@@ -165,4 +131,24 @@ fun Alternative(title: String, subtitle: String) {
             }
         }
     }
+
+    Spacer(Modifier.height(10.dp))
 }
+
+
+
+
+
+
+data class Question(
+    val title: String = "",
+    val description: String = "",
+    val alternatives: List<String> = listOf(),
+    val correctAnswerIndex: Int = -1
+)
+
+
+
+
+
+

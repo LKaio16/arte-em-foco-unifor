@@ -49,7 +49,7 @@ fun QuizEnterNameScreen(navController: NavController) {
 
         Text(text = "Insira seu nome:", fontSize = 15.sp, fontWeight = FontWeight.Black)
         Spacer(Modifier.height(5.dp))
-        CaixaTexto("Nome")
+//        CaixaTexto("Nome")
         Spacer(Modifier.height(10.dp))
 
         val colorPrimary = androidx.compose.material3.MaterialTheme.colorScheme.primary

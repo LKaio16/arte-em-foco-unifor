@@ -61,7 +61,11 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun CaixaTexto(placeholder: String) {
+fun CaixaTexto(
+    placeholder: String,
+    text: String,
+    onTextChange: (String) -> Unit
+) {
     Box(
         modifier = Modifier
             .width(250.dp)
@@ -70,11 +74,9 @@ fun CaixaTexto(placeholder: String) {
             .border(1.dp, Color.LightGray, RoundedCornerShape(10.dp)),
         contentAlignment = Alignment.Center
     ) {
-        var textState by remember { mutableStateOf("") }
-
         BasicTextField(
-            value = textState,
-            onValueChange = { textState = it },
+            value = text,
+            onValueChange = onTextChange,
             modifier = Modifier
                 .width(250.dp)
                 .background(Color.Transparent),
@@ -84,7 +86,7 @@ fun CaixaTexto(placeholder: String) {
                 textAlign = TextAlign.Center
             ),
             decorationBox = { innerTextField ->
-                if (textState.isEmpty()) {
+                if (text.isEmpty()) {
                     Text(
                         text = placeholder,
                         modifier = Modifier.fillMaxWidth(),
@@ -99,6 +101,7 @@ fun CaixaTexto(placeholder: String) {
         )
     }
 }
+
 
 
 @Composable
@@ -127,8 +130,3 @@ fun LabelInput(text: String) {
 //    MainScreen()
 //}
 
-@Preview
-@Composable
-private fun APreview() {
-    CaixaTexto("Aaaa")
-}

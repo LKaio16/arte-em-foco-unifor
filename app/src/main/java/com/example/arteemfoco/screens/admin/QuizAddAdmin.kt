@@ -66,22 +66,25 @@ fun QuizAddAdminScreen(navController: NavController) {
 
             Button(onClick = {
                 val db = FirebaseFirestore.getInstance()
-                val quizRef = db.collection("quizzes").document() // cria um ID único para o quiz
+                val quizRef = db.collection("quizzes").document()
+                val code = quizRef.id.take(4) // Use os primeiros 6 caracteres como código
 
                 val quizData = mapOf(
                     "title" to title,
                     "audioDescription" to audioDescription,
-                    "id" to quizRef.id
+                    "id" to quizRef.id,
+                    "code" to code
                 )
 
                 quizRef.set(quizData).addOnSuccessListener {
-                    navController.navigate("quizAdminScreen/${quizRef.id}") // Passa o ID do quiz para a próxima tela
+                    navController.navigate("quizAdminScreen/${quizRef.id}")
                 }.addOnFailureListener {
                     // Tratamento de erro
                 }
             }) {
                 Text("Salvar Quiz")
             }
+
         }
     }
 }
@@ -90,5 +93,5 @@ fun QuizAddAdminScreen(navController: NavController) {
 @Preview
 fun QuizScreenPreview() {
     val navController = rememberNavController()
-    QuizScreen(navController)
+//    QuizScreen(navController)
 }

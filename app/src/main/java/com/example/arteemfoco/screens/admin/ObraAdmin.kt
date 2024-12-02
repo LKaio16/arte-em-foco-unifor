@@ -115,7 +115,8 @@ fun ObraAdminScreen(navController: NavHostController) {
                             obraId = obra.id,
                             onDelete = { obraId ->
                                 obras = obras.filter { it.id != obraId }
-                            }
+                            },
+                            navController = navController
                         )
                         Spacer(Modifier.height(10.dp))
                     }
@@ -158,7 +159,7 @@ fun ObraAdminScreenPreview() {
 
 
 @Composable
-fun ObraCardAdmin(title: String, author: String, obraId: String, onDelete: (String) -> Unit) {
+fun ObraCardAdmin(title: String, author: String, obraId: String, onDelete: (String) -> Unit,navController: NavController) {
     val db = FirebaseFirestore.getInstance()
 
     Box(
@@ -166,6 +167,9 @@ fun ObraCardAdmin(title: String, author: String, obraId: String, onDelete: (Stri
             .width(350.dp)
             .background(Color.Gray, shape = RoundedCornerShape(16.dp))
             .height(120.dp)
+            .clickable {
+                navController.navigate("obraAdminView/$obraId")
+            }
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             // Caixa escura à esquerda

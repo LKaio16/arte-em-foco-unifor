@@ -1,5 +1,6 @@
 package com.example.arteemfoco.screens.quiz
 
+import QuizViewModel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,6 +15,10 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,7 +32,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.arteemfoco.CaixaTexto
 
 @Composable
-fun QuizEnterCodeScreen(navController: NavController) {
+fun QuizEnterCodeScreen(navController: NavController, quizViewModel: QuizViewModel) {
+    var code by remember { mutableStateOf("") }
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -35,36 +42,31 @@ fun QuizEnterCodeScreen(navController: NavController) {
             .fillMaxSize()
             .background(color = Color.White)
     ) {
-
-        Box(
-            modifier = Modifier
-                .background(Color.Gray)
-                .size(250.dp, 150.dp)
-        ) {
-        }
-
-        Spacer(Modifier.height(20.dp))
-        CaixaTexto("Código")
-        Spacer(Modifier.height(10.dp))
-
-        val colorPrimary = androidx.compose.material3.MaterialTheme.colorScheme.primary
-//      teste cor
+        CaixaTexto(
+            placeholder = "Código",
+            text = code,
+            onTextChange = { code = it }
+        )
 
         Button(
-            modifier = Modifier
-                .width(250.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .background(colorPrimary),
-            onClick = { navController.navigate("quizEnterNameScreen") }) {
-            androidx.compose.material3.Text("Jogar")
+            modifier = Modifier.width(250.dp),
+            onClick = {
+                if (code != "") {
+                    quizViewModel.loadQuiz(code)
+                    navController.navigate("quiz/$code")
+                }
+
+            }
+        ) {
+            Text("Jogar")
         }
     }
-
 }
+
 
 @Composable
 @Preview
 fun QuizEnterCodeScreenPreview() {
     val navController = rememberNavController()
-    QuizEnterCodeScreen(navController)
+//    QuizEnterCodeScreen(navController)
 }
