@@ -1,6 +1,7 @@
 package com.example.arteemfoco.screens
 
 import android.util.Log
+import android.widget.ImageView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.material3.Button
@@ -19,6 +21,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -27,9 +33,15 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
+import com.example.arteemfoco.R
 import com.google.firebase.firestore.FirebaseFirestore
+import com.squareup.picasso.Picasso
 
 @Composable
 fun StartScreen(navController: NavController) {
@@ -47,12 +59,21 @@ fun StartScreen(navController: NavController) {
 
         val colorPrimary = androidx.compose.material3.MaterialTheme.colorScheme.primary
 
-        Box(
+        AndroidView(
             modifier = Modifier
-                .background(Color.Gray)
-                .size(250.dp, 150.dp)
-        ) {
-        }
+                .size(245.dp, 146.dp)
+                .clip(RoundedCornerShape(16.dp)),
+            factory = { context ->
+                ImageView(context).apply {
+                    Picasso.get()
+                        .load("https://upload.wikimedia.org/wikipedia/commons/0/08/Sem_t%C3%ADtulo-removebg-preview.png")
+                        .fit() // Ajusta a imagem para caber sem cortar
+                        .centerInside() // Garante que a imagem fique dentro dos limites
+                        .into(this)
+                }
+            }
+        )
+
 
         Spacer(Modifier.height(20.dp))
 
@@ -76,13 +97,12 @@ fun StartScreen(navController: NavController) {
             androidx.compose.material3.Text("Ver Obras")
         }
 
-
         Spacer(Modifier.height(10.dp))
 
         Text(
             text = buildAnnotatedString {
                 withStyle(style = SpanStyle(textDecoration = TextDecoration.Underline)) { // Sublinhado em todo o texto
-                    append("Vorem ipsum dolor ")
+                    append("Entrar como Administrador")
                     withStyle(
                         style = SpanStyle(
                             fontWeight = FontWeight.Bold
@@ -96,68 +116,9 @@ fun StartScreen(navController: NavController) {
             modifier = Modifier.width(250.dp).clickable { navController.navigate("loginScreen") },
             textAlign = TextAlign.End
         )
-
-        // TESTE FIREBASE
-       /* Button(
-            modifier = Modifier
-                .width(250.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .background(colorPrimary),
-            onClick = {
-                val db = FirebaseFirestore.getInstance()
-                val user = hashMapOf(
-                    "first" to "Mario",
-                    "last" to "Silva",
-                    "born" to 1990
-                )
-
-                db.collection("users").add(user)
-                    .addOnSuccessListener { documentReference ->
-                        Log.d("Firestore", "DocumentSnapshot added with ID: ${documentReference.id}")
-                    }
-                    .addOnFailureListener { e ->
-                        Log.w("Firestore", "Error adding document", e)
-                    }
-            }
-        ) {
-            androidx.compose.material3.Text("Adicionar ao Firestore")
-        }
-
-
-
-        Button(
-            modifier = Modifier
-                .width(250.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .background(colorPrimary),
-            onClick = {
-                val db = FirebaseFirestore.getInstance()
-                db.collection("users")
-                    .whereEqualTo("born", 1990)
-                    .get()
-                    .addOnSuccessListener { documents ->
-                        for (document in documents) {
-                            db.collection("users").document(document.id).delete()
-                                .addOnSuccessListener {
-                                    Log.d("Firestore", "Document with ID: ${document.id} successfully deleted.")
-                                }
-                                .addOnFailureListener { e ->
-                                    Log.w("Firestore", "Error deleting document", e)
-                                }
-                        }
-                    }
-                    .addOnFailureListener { e ->
-                        Log.w("Firestore", "Error finding documents", e)
-                    }
-            }
-        ) {
-            androidx.compose.material3.Text("Deletar Nascidos em 1990")
-        }*/
-
-
-
     }
 }
+
 
 @Composable
 @Preview

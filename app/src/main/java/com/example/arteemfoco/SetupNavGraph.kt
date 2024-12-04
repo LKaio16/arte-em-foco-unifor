@@ -15,6 +15,7 @@ import com.example.arteemfoco.screens.RegisterScreen
 import com.example.arteemfoco.screens.StartScreen
 import com.example.arteemfoco.screens.admin.ObraAddAdminScreen
 import com.example.arteemfoco.screens.admin.ObraAdminScreen
+import com.example.arteemfoco.screens.admin.ObraAdminViewScreen
 import com.example.arteemfoco.screens.admin.QuizAdminScreen
 import com.example.arteemfoco.screens.admin.QuizAddAdminScreen
 import com.example.arteemfoco.screens.admin.QuizAddPerguntaAdminScreen
@@ -41,11 +42,12 @@ fun SetupNavGraph(navController: NavHostController, modifier: Modifier = Modifie
         composable(Screen.QuizEnterName.route) { QuizEnterNameScreen(navController) }
 
         composable(
-            route = "quiz/{quizId}",
+            route = "quiz/{quizId}/{name}",
             arguments = listOf(navArgument("quizId") { type = NavType.StringType })
         ) { backStackEntry ->
             val quizId = backStackEntry.arguments?.getString("quizId") ?: ""
-            QuizScreen(navController = navController, quizViewModel = quizViewModel, quizId = quizId)
+            val name = backStackEntry.arguments?.getString("name") ?: ""
+            QuizScreen(navController = navController, quizViewModel = quizViewModel, quizId = quizId, userName = name)
         }
 
         composable("${Screen.QuizEnd.route}/{correctAnswers}/{totalQuestions}") { backStackEntry ->
@@ -56,7 +58,16 @@ fun SetupNavGraph(navController: NavHostController, modifier: Modifier = Modifie
 
 
         composable(Screen.Obra.route) { ObraScreen(navController) }
-        composable(Screen.ObraView.route) { ObraViewScreen(navController) }
+
+        composable(
+            route = "obraView/{obraId}",
+            arguments = listOf(navArgument("obraId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val obraId = backStackEntry.arguments?.getString("obraId")
+            if (obraId != null) {
+                ObraViewScreen(navController = navController, obraId = obraId)
+            }
+        }
 
         // Telas Admin
         composable(Screen.ObraAdmin.route) { ObraAdminScreen(navController) }

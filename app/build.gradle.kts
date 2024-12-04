@@ -1,7 +1,8 @@
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id ("com.google.gms.google-services")
+    id("com.google.gms.google-services")
 
 }
 
@@ -52,7 +53,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -61,15 +61,19 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation (libs.material3)
+    implementation(libs.material3)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.hilt.android) // Hilt Android
-    implementation (libs.androidx.material)
-    implementation (libs.androidx.material.icons.extended)
+    implementation(libs.androidx.material)
+    implementation(libs.androidx.material.icons.extended)
     implementation(platform(libs.firebase.bom))
+    implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
+    implementation("com.google.firebase:firebase-storage-ktx")
+    implementation("io.coil-kt.coil3:coil-compose:3.0.4")
+    implementation ("com.squareup.picasso:picasso:2.71828")
+
     implementation(libs.firebase.firestore.ktx)
-    implementation("io.coil-kt.coil3:coil-compose:3.0.3")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

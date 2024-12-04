@@ -21,6 +21,7 @@ import com.example.arteemfoco.screens.admin.QuizAdminScreen
 import com.example.arteemfoco.screens.admin.QuizAddAdminScreen
 import com.example.arteemfoco.screens.admin.QuizAddPerguntaAdminScreen
 import com.example.arteemfoco.screens.admin.QuizAdminViewScreen
+import com.example.arteemfoco.screens.admin.RankingScreen
 import com.example.arteemfoco.screens.obras.ObraScreen
 import com.example.arteemfoco.screens.obras.ObraViewScreen
 import com.example.arteemfoco.screens.quiz.QuizEndScreen
@@ -44,18 +45,8 @@ fun SetupAdminNavGraph(navController: NavHostController, modifier: Modifier = Mo
 
         composable(Screen.QuizEnterName.route) { QuizEnterNameScreen(navController) }
 
-        composable(
-            route = "quiz/{quizId}",
-            arguments = listOf(navArgument("quizId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val quizId = backStackEntry.arguments?.getString("quizId") ?: ""
-            QuizScreen(navController = navController, quizViewModel = quizViewModel, quizId = quizId)
-        }
-
-
 
         composable(Screen.Obra.route) { ObraScreen(navController) }
-        composable(Screen.ObraView.route) { ObraViewScreen(navController) }
 
         // Telas Admin
         composable(Screen.ObraAdmin.route) { ObraAdminScreen(navController) }
@@ -82,6 +73,27 @@ fun SetupAdminNavGraph(navController: NavHostController, modifier: Modifier = Mo
             val obraId = backStackEntry.arguments?.getString("obraId")
             if (obraId != null) {
                 ObraAdminViewScreen(navController = navController, obraId = obraId)
+            }
+        }
+
+        composable(
+            route = "rankingScreen/{quizId}",
+            arguments = listOf(navArgument("quizId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val quizId = backStackEntry.arguments?.getString("quizId")
+            if (quizId != null) {
+                RankingScreen(navController = navController, quizId = quizId)
+            }
+        }
+
+
+        composable(
+            route = "obraView/{obraId}",
+            arguments = listOf(navArgument("obraId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val obraId = backStackEntry.arguments?.getString("obraId")
+            if (obraId != null) {
+                ObraViewScreen(navController = navController, obraId = obraId)
             }
         }
 

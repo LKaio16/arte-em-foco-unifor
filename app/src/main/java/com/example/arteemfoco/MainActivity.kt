@@ -31,8 +31,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.arteemfoco.ui.theme.ArteEmFocoTheme
+import com.example.compose.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
+import com.google.firebase.FirebaseApp
 
 
 @AndroidEntryPoint
@@ -40,9 +41,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
+        FirebaseApp.initializeApp(this)
         setContent {
-            ArteEmFocoTheme {
+            AppTheme   {
                 // Crie e configure o NavController aqui
                 val navController = rememberNavController()
 
