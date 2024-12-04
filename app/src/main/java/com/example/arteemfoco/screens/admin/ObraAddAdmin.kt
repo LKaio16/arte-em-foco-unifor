@@ -1,13 +1,15 @@
 package com.example.arteemfoco.screens.admin
 
+import android.net.Uri
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.*
@@ -21,9 +23,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil3.compose.rememberAsyncImagePainter
+import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.FirebaseFirestore
-import android.util.Log
-import com.example.arteemfoco.screens.obras.Obra
+import com.google.firebase.storage.FirebaseStorage
+
+import java.util.*
 
 @Composable
 fun ObraAddAdminScreen(navController: NavController) {
@@ -33,7 +38,15 @@ fun ObraAddAdminScreen(navController: NavController) {
     var author by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var audioDescription by remember { mutableStateOf("") }
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    var isUploading by remember { mutableStateOf(false) }
 
+    // Lançador para selecionar imagens
+    val selectImageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        imageUri = uri
+    }
 
     Box(
         modifier = Modifier
@@ -86,13 +99,30 @@ fun ObraAddAdminScreen(navController: NavController) {
                 .fillMaxSize()
                 .padding(top = 0.dp)
         ) {
-            // Imagem
+            // Box para seleção de imagem
             Box(
                 modifier = Modifier
                     .background(Color.Gray)
                     .size(300.dp, 150.dp)
-            )
-
+                    .clickable {
+                        selectImageLauncher.launch("image/*")
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                if (imageUri != null) {
+                    Image(
+                        painter = rememberAsyncImagePainter(imageUri),
+                        contentDescription = "Imagem Selecionada",
+                        modifier = Modifier.fillMaxSize()
+                    )
+                } else {
+                    Text(
+                        text = "Clique para adicionar uma imagem",
+                        color = Color.White,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
 
             Spacer(Modifier.height(16.dp))
 
@@ -160,31 +190,46 @@ fun ObraAddAdminScreen(navController: NavController) {
         ) {
             Button(
                 onClick = {
-                    val db = FirebaseFirestore.getInstance()
-                    val obra = hashMapOf(
-                        "title" to title,
-                        "author" to author,
-                        "description" to description,
-                        "audioDescription" to audioDescription
-                    )
+                    if (imageUri != null) {
+                        isUploading = true
+                        val storageRef = FirebaseStorage.getInstance().reference
+                        val imageRef = storageRef.child("images/${UUID.randomUUID()}.jpg")
 
-                    db.collection("obras").add(obra)
-                        .addOnSuccessListener { documentReference ->
-                            Log.d("Firestore", "Obra adicionada com ID: ${documentReference.id}")
+                        imageRef.putFile(imageUri!!)
+                            .addOnSuccessListener {
+                                imageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
+                                    val db = FirebaseFirestore.getInstance()
+                                    val obra = hashMapOf(
+                                        "title" to title,
+                                        "author" to author,
+                                        "description" to description,
+                                        "audioDescription" to audioDescription,
+                                        "imageUrl" to downloadUrl.toString()
+                                    )
 
-                            title = ""
-                            author = ""
-                            description = ""
-                            audioDescription = ""
-
-                            navController.popBackStack() // Navega de volta após adicionar
-                        }
-                        .addOnFailureListener { e ->
-                            Log.w("Firestore", "Erro ao adicionar obra", e)
-                        }
-                }
+                                    db.collection("obras").add(obra)
+                                        .addOnSuccessListener {
+                                            Log.d("Firestore", "Obra adicionada com sucesso!")
+                                            navController.popBackStack()
+                                        }
+                                        .addOnFailureListener { e ->
+                                            Log.w("Firestore", "Erro ao adicionar obra", e)
+                                        }
+                                }
+                            }
+                            .addOnFailureListener {
+                                Log.e("Firebase", "Erro ao fazer upload da imagem", it)
+                            }
+                            .addOnCompleteListener {
+                                isUploading = false
+                            }
+                    } else {
+                        Log.e("Firebase", "Nenhuma imagem selecionada")
+                    }
+                },
+                enabled = !isUploading
             ) {
-                Text(text = "Adicionar Obra")
+                Text(text = if (isUploading) "Salvando..." else "Adicionar Obra")
             }
         }
     }

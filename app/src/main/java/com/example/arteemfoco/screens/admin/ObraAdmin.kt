@@ -3,8 +3,12 @@ package com.example.arteemfoco.screens.admin
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
-import TravelCard
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
 import android.util.Log
+import android.widget.ImageView
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,15 +22,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.FloatingActionButton
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Icon
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -35,25 +37,41 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.compose.SubcomposeAsyncImage
+import coil3.compose.rememberAsyncImagePainter
+import coil3.compose.rememberConstraintsSizeResolver
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.example.arteemfoco.AdminScreenScaffold
+import com.example.arteemfoco.R
 import com.example.arteemfoco.Screen
-import com.example.arteemfoco.screens.obras.Obra
 import com.google.firebase.firestore.FirebaseFirestore
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.runtime.*
+import com.squareup.picasso.Picasso
+import kotlin.math.log
 
 data class Obra(
     val id: String = "",
     val title: String = "",
     val author: String = "",
+    val imageUrl: String = "",
+    var description: String = "",
 )
 
 
@@ -73,7 +91,8 @@ fun ObraAdminScreen(navController: NavHostController) {
                         com.example.arteemfoco.screens.admin.Obra(
                             id = document.id,
                             title = document.getString("title") ?: "",
-                            author = document.getString("author") ?: ""
+                            author = document.getString("author") ?: "",
+                            imageUrl = document.getString("imageUrl") ?: ""
                         )
                     }
                     obras = obrasList
@@ -116,7 +135,8 @@ fun ObraAdminScreen(navController: NavHostController) {
                             onDelete = { obraId ->
                                 obras = obras.filter { it.id != obraId }
                             },
-                            navController = navController
+                            navController = navController,
+                            imageUrl = obra.imageUrl
                         )
                         Spacer(Modifier.height(10.dp))
                     }
@@ -159,7 +179,14 @@ fun ObraAdminScreenPreview() {
 
 
 @Composable
-fun ObraCardAdmin(title: String, author: String, obraId: String, onDelete: (String) -> Unit,navController: NavController) {
+fun ObraCardAdmin(
+    title: String,
+    author: String,
+    obraId: String,
+    imageUrl: String?,  // Parâmetro para a URL da imagem
+    onDelete: (String) -> Unit,
+    navController: NavController,
+) {
     val db = FirebaseFirestore.getInstance()
 
     Box(
@@ -172,17 +199,36 @@ fun ObraCardAdmin(title: String, author: String, obraId: String, onDelete: (Stri
             }
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
-            // Caixa escura à esquerda
+            // Caixa à esquerda (imagem ou fundo azul)
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(140.dp)
-                    .background(
-                        Color.Blue,
-                        shape = RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp)
-                    )
-            )
+                    .clip(RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp)) // Recorte arredondado
+                    .background(Color.Blue)
+            ) {
 
+                val imageUrlToLoad =
+                    imageUrl.takeIf { !it.isNullOrEmpty() }
+                        ?: "https://www.animeac.com.br/wp-content/uploads/2024/11/Descubra-Quem-e-Aira-Shiratori-em-Dandadan.png"
+
+                AndroidView(
+                    factory = { context ->
+                        ImageView(context).apply {
+                            scaleType = ImageView.ScaleType.CENTER_CROP
+                            clipToOutline = true // Garante que o recorte será aplicado
+                        }
+                    },
+                    modifier = Modifier.fillMaxSize(),
+                    update = { imageView ->
+                        Picasso.get()
+                            .load(imageUrlToLoad)
+                            .placeholder(R.drawable.ic_launcher_background) // Imagem de carregamento
+                            .error(R.drawable.ic_launcher_foreground)       // Imagem de erro
+                            .into(imageView)
+                    }
+                )
+            }
             // Coluna com título e subtítulo à direita
             Column(
                 modifier = Modifier
@@ -200,13 +246,12 @@ fun ObraCardAdmin(title: String, author: String, obraId: String, onDelete: (Stri
                     modifier = Modifier.width(170.dp)
                 )
             }
-
-
         }
 
+        // Ícone de exclusão
         Box(
             modifier = Modifier
-                .padding(end = 8.dp, top = 8.dp, start = 5.dp)
+                .padding(end = 20.dp, top = 8.dp, start = 5.dp)
                 .align(Alignment.CenterEnd)
                 .clickable {
                     // Exclui a obra do Firestore
@@ -229,7 +274,5 @@ fun ObraCardAdmin(title: String, author: String, obraId: String, onDelete: (Stri
                 tint = Color.White
             )
         }
-
     }
-
 }
