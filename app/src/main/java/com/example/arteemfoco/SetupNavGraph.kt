@@ -48,8 +48,13 @@ fun SetupNavGraph(navController: NavHostController, modifier: Modifier = Modifie
             QuizScreen(navController = navController, quizViewModel = quizViewModel, quizId = quizId)
         }
 
+        composable("${Screen.QuizEnd.route}/{correctAnswers}/{totalQuestions}") { backStackEntry ->
+            val correctAnswers = backStackEntry.arguments?.getString("correctAnswers")?.toInt() ?: 0
+            val totalQuestions = backStackEntry.arguments?.getString("totalQuestions")?.toInt() ?: 0
+            QuizEndScreen(navController, correctAnswers, totalQuestions)
+        }
 
-        composable(Screen.QuizEnd.route) { QuizEndScreen(navController) }
+
         composable(Screen.Obra.route) { ObraScreen(navController) }
         composable(Screen.ObraView.route) { ObraViewScreen(navController) }
 

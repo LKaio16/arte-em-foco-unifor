@@ -123,10 +123,3 @@ fun LabelInput(text: String) {
     }
 }
 
-//
-//@Preview
-//@Composable
-//private fun MainScreenPreview() {
-//    MainScreen()
-//}
-

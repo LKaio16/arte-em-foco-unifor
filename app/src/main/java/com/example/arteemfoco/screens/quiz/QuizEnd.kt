@@ -29,7 +29,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.arteemfoco.CaixaTexto
 
 @Composable
-fun QuizEndScreen(navController: NavController) {
+fun QuizEndScreen(navController: NavController, correctAnswers: Int, totalQuestions: Int) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -50,49 +50,36 @@ fun QuizEndScreen(navController: NavController) {
         Column(
             modifier = Modifier
                 .width(350.dp)
-                .padding(16.dp), // Espaçamento interno
+                .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp) // Espaçamento entre os textos
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-
             Text(
-                text = "Você acertou 10 de 11!",
+                text = "Você acertou $correctAnswers de $totalQuestions!",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold
             )
 
-
             Text(
-                text = "Parabens, continue assim!",
+                text = "Parabéns, continue assim!",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Normal
             )
-
-
         }
-
-
 
         Spacer(Modifier.height(10.dp))
 
         val colorPrimary = androidx.compose.material3.MaterialTheme.colorScheme.primary
-
 
         Button(
             modifier = Modifier
                 .width(250.dp)
                 .clip(RoundedCornerShape(10.dp))
                 .background(colorPrimary),
-            onClick = { navController.navigate("startScreen") }) {
+            onClick = { navController.navigate("startScreen") }
+        ) {
             androidx.compose.material3.Text("Voltar")
         }
     }
-
 }
 
-@Composable
-@Preview
-fun QuizEndScreenPreview() {
-    val navController = rememberNavController()
-    QuizEndScreen(navController)
-}

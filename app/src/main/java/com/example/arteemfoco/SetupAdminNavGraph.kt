@@ -53,7 +53,7 @@ fun SetupAdminNavGraph(navController: NavHostController, modifier: Modifier = Mo
         }
 
 
-        composable(Screen.QuizEnd.route) { QuizEndScreen(navController) }
+
         composable(Screen.Obra.route) { ObraScreen(navController) }
         composable(Screen.ObraView.route) { ObraViewScreen(navController) }
 

@@ -1,5 +1,6 @@
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.arteemfoco.screens.admin.Question
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -9,13 +10,6 @@ data class Quiz(
     val id: String = "",
     val title: String = "",
     val perguntas: List<Question> = emptyList()
-)
-
-data class Question(
-    val title: String = "",
-    val description: String = "",
-    val alternatives: List<String> = emptyList(),
-    val correctAnswerIndex: Int = -1
 )
 
 class QuizViewModel : ViewModel() {

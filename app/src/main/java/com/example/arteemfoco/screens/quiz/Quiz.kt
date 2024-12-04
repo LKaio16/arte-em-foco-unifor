@@ -1,28 +1,15 @@
 package com.example.arteemfoco.screens.quiz
 
 import QuizViewModel
+import android.content.Context
+import android.speech.tts.TextToSpeech
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-//noinspection UsingMaterialAndMaterial3Libraries
+import androidx.compose.material.Button
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,10 +18,41 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.arteemfoco.Screen
+import com.example.arteemfoco.screens.admin.Question
+
+
+import java.util.Locale
+import androidx.compose.ui.platform.LocalContext
 
 
 @Composable
 fun QuizScreen(navController: NavController, quizViewModel: QuizViewModel, quizId: String) {
+    // Inicializa o TextToSpeech
+    val context = LocalContext.current
+    var textToSpeech by remember { mutableStateOf<TextToSpeech?>(null) }
+
+    LaunchedEffect(Unit) {
+        textToSpeech = TextToSpeech(context) {
+            if (it == TextToSpeech.SUCCESS) {
+                // Defina explicitamente o idioma como Português do Brasil
+                val locale = Locale("pt", "BR")
+                val result = textToSpeech?.setLanguage(locale)
+                if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                    // Trate o erro caso o idioma não seja suportado ou falte dados
+                    // Por exemplo, exiba uma mensagem ou faça um fallback para o idioma padrão
+                }
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        textToSpeech = TextToSpeech(context) {
+            if (it == TextToSpeech.SUCCESS) {
+                textToSpeech?.language = Locale.getDefault()
+            }
+        }
+    }
+
     // Carrega o quiz do Firebase ao abrir a tela
     LaunchedEffect(Unit) {
         quizViewModel.loadQuiz(quizId)
@@ -43,8 +61,10 @@ fun QuizScreen(navController: NavController, quizViewModel: QuizViewModel, quizI
     val quiz by quizViewModel.quiz.collectAsState()
 
     if (quiz != null) {
-        val question = quiz!!.perguntas.firstOrNull() // Exibe a primeira pergunta como exemplo
-        var selectedIndex by remember { mutableStateOf<Int?>(null) } // Armazena o índice da alternativa selecionada
+        var currentQuestionIndex by remember { mutableStateOf(0) } // Índice da pergunta atual
+        var selectedIndex by remember { mutableStateOf<Int?>(null) } // Índice da alternativa selecionada
+        var correctAnswers by remember { mutableStateOf(0) } // Número de respostas corretas
+        val question = quiz!!.perguntas.getOrNull(currentQuestionIndex) // Pega a pergunta atual
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -64,15 +84,34 @@ fun QuizScreen(navController: NavController, quizViewModel: QuizViewModel, quizI
                         onClick = {
                             if (selectedIndex == null) { // Só permite clicar se nenhuma alternativa foi selecionada
                                 selectedIndex = index
+
+                                // Incrementa a pontuação se a resposta estiver correta
                                 if (index == question.correctAnswerIndex) {
-                                    // Navegar para a tela final se a resposta estiver certa
-                                    navController.navigate(Screen.QuizEnd.route)
+                                    correctAnswers++
+                                }
+
+                                // Verifica se é a última pergunta
+                                if (currentQuestionIndex == quiz!!.perguntas.size - 1) {
+                                    // Navega para a tela final, passando o número de respostas corretas
+                                    navController.navigate("${Screen.QuizEnd.route}/${correctAnswers}/${quiz!!.perguntas.size}")
                                 } else {
-                                    // Caso a resposta esteja errada, você pode dar um feedback (exemplo: alterar cor)
+                                    // Avança para a próxima pergunta
+                                    selectedIndex = null // Reseta a seleção para a próxima pergunta
+                                    currentQuestionIndex++
                                 }
                             }
                         }
                     )
+                }
+
+                // Botão de Text-to-Speech
+                Button(
+                    onClick = {
+                        speakQuestionAndAlternatives(textToSpeech, question)
+                    },
+                    modifier = Modifier.padding(top = 16.dp)
+                ) {
+                    Text(text = "Ouvir Pergunta")
                 }
             }
         }
@@ -81,17 +120,29 @@ fun QuizScreen(navController: NavController, quizViewModel: QuizViewModel, quizI
     }
 }
 
+// Função para falar a pergunta e as alternativas
+fun speakQuestionAndAlternatives(tts: TextToSpeech?, question: Question) {
+
+    val textToSpeak = buildString {
+        append(question.title)
+        question.alternatives.forEachIndexed { index, alternative ->
+            append("\nAlternativa ${index + 1}: $alternative")
+        }
+    }
+    tts?.speak(textToSpeak, TextToSpeech.QUEUE_FLUSH, null, null)
+}
+
 @Composable
 fun Alternative(title: String, subtitle: String, isSelected: Boolean, onClick: () -> Unit) {
     Box(
         modifier = Modifier
-            .width(300.dp) // Largura total da caixa principal
+            .width(300.dp)
             .background(
                 if (isSelected) Color.Green else Color.Gray, // Alterar a cor quando selecionado
                 shape = RoundedCornerShape(16.dp)
             )
             .height(70.dp)
-            .clickable { onClick() } // Adiciona a ação de clique
+            .clickable { onClick() }
     ) {
         Row(
             modifier = Modifier.fillMaxSize() // Preencher a caixa cinza
@@ -134,21 +185,3 @@ fun Alternative(title: String, subtitle: String, isSelected: Boolean, onClick: (
 
     Spacer(Modifier.height(10.dp))
 }
-
-
-
-
-
-
-data class Question(
-    val title: String = "",
-    val description: String = "",
-    val alternatives: List<String> = listOf(),
-    val correctAnswerIndex: Int = -1
-)
-
-
-
-
-
-
