@@ -26,34 +26,19 @@ import androidx.compose.ui.platform.LocalContext
 
 
 @Composable
-fun QuizScreen(navController: NavController, quizViewModel: QuizViewModel, quizId: String) {
-    // Inicializa o TextToSpeech
+fun QuizScreen(navController: NavController, quizViewModel: QuizViewModel, quizId: String, userName: String) {
     val context = LocalContext.current
     var textToSpeech by remember { mutableStateOf<TextToSpeech?>(null) }
 
     LaunchedEffect(Unit) {
         textToSpeech = TextToSpeech(context) {
             if (it == TextToSpeech.SUCCESS) {
-                // Defina explicitamente o idioma como Português do Brasil
                 val locale = Locale("pt", "BR")
-                val result = textToSpeech?.setLanguage(locale)
-                if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                    // Trate o erro caso o idioma não seja suportado ou falte dados
-                    // Por exemplo, exiba uma mensagem ou faça um fallback para o idioma padrão
-                }
+                textToSpeech?.setLanguage(locale)
             }
         }
     }
 
-    LaunchedEffect(Unit) {
-        textToSpeech = TextToSpeech(context) {
-            if (it == TextToSpeech.SUCCESS) {
-                textToSpeech?.language = Locale.getDefault()
-            }
-        }
-    }
-
-    // Carrega o quiz do Firebase ao abrir a tela
     LaunchedEffect(Unit) {
         quizViewModel.loadQuiz(quizId)
     }
@@ -61,10 +46,10 @@ fun QuizScreen(navController: NavController, quizViewModel: QuizViewModel, quizI
     val quiz by quizViewModel.quiz.collectAsState()
 
     if (quiz != null) {
-        var currentQuestionIndex by remember { mutableStateOf(0) } // Índice da pergunta atual
-        var selectedIndex by remember { mutableStateOf<Int?>(null) } // Índice da alternativa selecionada
-        var correctAnswers by remember { mutableStateOf(0) } // Número de respostas corretas
-        val question = quiz!!.perguntas.getOrNull(currentQuestionIndex) // Pega a pergunta atual
+        var currentQuestionIndex by remember { mutableStateOf(0) }
+        var selectedIndex by remember { mutableStateOf<Int?>(null) }
+        var correctAnswers by remember { mutableStateOf(0) }
+        val question = quiz!!.perguntas.getOrNull(currentQuestionIndex)
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -80,23 +65,21 @@ fun QuizScreen(navController: NavController, quizViewModel: QuizViewModel, quizI
                     Alternative(
                         title = "Alternativa ${index + 1}",
                         subtitle = alternative,
-                        isSelected = selectedIndex == index, // Verifica se a alternativa foi selecionada
+                        isSelected = selectedIndex == index,
                         onClick = {
-                            if (selectedIndex == null) { // Só permite clicar se nenhuma alternativa foi selecionada
+                            if (selectedIndex == null) {
                                 selectedIndex = index
 
-                                // Incrementa a pontuação se a resposta estiver correta
                                 if (index == question.correctAnswerIndex) {
                                     correctAnswers++
                                 }
 
-                                // Verifica se é a última pergunta
                                 if (currentQuestionIndex == quiz!!.perguntas.size - 1) {
-                                    // Navega para a tela final, passando o número de respostas corretas
+                                    // Salvar respostas no banco de dados
+                                    quizViewModel.saveResults(userName, correctAnswers)
                                     navController.navigate("${Screen.QuizEnd.route}/${correctAnswers}/${quiz!!.perguntas.size}")
                                 } else {
-                                    // Avança para a próxima pergunta
-                                    selectedIndex = null // Reseta a seleção para a próxima pergunta
+                                    selectedIndex = null
                                     currentQuestionIndex++
                                 }
                             }
@@ -104,7 +87,6 @@ fun QuizScreen(navController: NavController, quizViewModel: QuizViewModel, quizI
                     )
                 }
 
-                // Botão de Text-to-Speech
                 Button(
                     onClick = {
                         speakQuestionAndAlternatives(textToSpeech, question)
@@ -119,6 +101,7 @@ fun QuizScreen(navController: NavController, quizViewModel: QuizViewModel, quizI
         Text("Carregando...")
     }
 }
+
 
 // Função para falar a pergunta e as alternativas
 fun speakQuestionAndAlternatives(tts: TextToSpeech?, question: Question) {

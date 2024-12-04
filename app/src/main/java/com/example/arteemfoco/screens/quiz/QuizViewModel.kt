@@ -18,21 +18,43 @@ class QuizViewModel : ViewModel() {
 
     private val firestore = FirebaseFirestore.getInstance()
 
+    private var loadedQuizId: String? = null // Armazena o ID correto do quiz carregado
+
+    fun saveResults(userName: String, correctAnswers: Int) {
+        val quizId = loadedQuizId
+        if (quizId == null) {
+            println("Erro: quizId não carregado corretamente!")
+            return
+        }
+
+        val response = mapOf(
+            "name" to userName,
+            "correctAnswers" to correctAnswers
+        )
+        firestore.collection("quizzes")
+            .document(quizId)
+            .collection("respostas")
+            .add(response)
+            .addOnSuccessListener {
+                println("Resultados salvos com sucesso!")
+            }
+            .addOnFailureListener { e ->
+                println("Erro ao salvar resultados: ${e.message}")
+            }
+    }
+
     fun loadQuiz(code: String) {
         viewModelScope.launch {
-            // Buscar o quiz pela propriedade 'code'
             firestore.collection("quizzes")
                 .whereEqualTo("code", code) // Procurando pelo campo 'code' no Firestore
                 .get()
                 .addOnSuccessListener { querySnapshot ->
-                    // Verifica se encontrou algum quiz com o código
                     val document = querySnapshot.documents.firstOrNull()
-
                     if (document != null) {
-                        val quizId = document.id  // O ID completo do quiz
-                        val title = document.getString("title") ?: "Sem título"
+                        val quizId = document.id // O ID correto do quiz
+                        loadedQuizId = quizId // Armazena o ID carregado
 
-                        // Agora, buscando as perguntas do quiz
+                        val title = document.getString("title") ?: "Sem título"
                         val perguntasCollection = firestore.collection("quizzes")
                             .document(quizId)
                             .collection("perguntas")
@@ -47,17 +69,20 @@ class QuizViewModel : ViewModel() {
                                 )
                             }
 
-                            // Atualizando o estado com o quiz completo
                             _quiz.value = Quiz(id = quizId, title = title, perguntas = perguntas)
                         }
+                    } else {
+                        println("Erro: Nenhum quiz encontrado com o código fornecido!")
                     }
                 }
                 .addOnFailureListener { exception ->
-                    // Tratar erro de falha na busca
                     println("Erro ao buscar quiz: ${exception.message}")
                 }
         }
     }
 }
+
+
+
 
 

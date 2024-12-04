@@ -82,13 +82,23 @@ fun QuizAdminViewScreen(navController: NavController, quizId: String) {
             }
         }
 
-        // Botão "Adicionar Pergunta" fixado ao final
-        Box(
+        // Botão "Ver Ranking"
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
-                .padding(16.dp)
+                .padding(bottom = 80.dp) // Ajuste para não cobrir o outro botão
         ) {
+
+            Text(text = "Código do Quiz: ${quizId.take(4)}")
+
+            Button(
+                onClick = { navController.navigate("rankingScreen/$quizId") },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Ver Ranking")
+            }
+
             Button(
                 onClick = { navController.navigate("quizAdminScreen/$quizId") },
                 modifier = Modifier.fillMaxWidth()

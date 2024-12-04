@@ -1,6 +1,7 @@
 package com.example.arteemfoco.screens.quiz
 
 import QuizViewModel
+import android.content.res.Resources.Theme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,10 +31,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.arteemfoco.CaixaTexto
+import com.example.arteemfoco.R
 
 @Composable
 fun QuizEnterCodeScreen(navController: NavController, quizViewModel: QuizViewModel) {
     var code by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf("") }
+    val colorPrimary = androidx.compose.material3.MaterialTheme.colorScheme.primary
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -43,19 +47,27 @@ fun QuizEnterCodeScreen(navController: NavController, quizViewModel: QuizViewMod
             .background(color = Color.White)
     ) {
         CaixaTexto(
+            placeholder = "Nome",
+            text = name,
+            onTextChange = { name = it }
+        )
+        Spacer(Modifier.height(16.dp))
+        CaixaTexto(
             placeholder = "Código",
             text = code,
             onTextChange = { code = it }
         )
-
+        Spacer(Modifier.height(16.dp))
         Button(
-            modifier = Modifier.width(250.dp),
+            modifier = Modifier
+                .width(250.dp)
+                .clip(RoundedCornerShape(10.dp))
+                .background(colorPrimary),
             onClick = {
-                if (code != "") {
+                if (code.isNotBlank() && name.isNotBlank()) {
                     quizViewModel.loadQuiz(code)
-                    navController.navigate("quiz/$code")
+                    navController.navigate("quiz/$code/$name")
                 }
-
             }
         ) {
             Text("Jogar")
