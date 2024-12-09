@@ -1,18 +1,15 @@
 package com.example.arteemfoco.screens
 
-import android.util.Log
 import android.widget.ImageView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.material3.Button
@@ -20,11 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -36,28 +28,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
-import coil3.request.crossfade
-import com.example.arteemfoco.R
-import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
 
 @Composable
 fun StartScreen(navController: NavController) {
+    // Recupera as cores do tema atual
+    val colorPrimary = androidx.compose.material3.MaterialTheme.colorScheme.primary
+    val backgroundColor = androidx.compose.material3.MaterialTheme.colorScheme.background
+    val textColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color.White)
+            .background(color = backgroundColor) // Usa a cor de fundo do tema
     ) {
 
         Spacer(Modifier.height(10.dp))
 
         Spacer(Modifier.height(30.dp))
-
-        val colorPrimary = androidx.compose.material3.MaterialTheme.colorScheme.primary
 
         AndroidView(
             modifier = Modifier
@@ -74,7 +64,6 @@ fun StartScreen(navController: NavController) {
             }
         )
 
-
         Spacer(Modifier.height(20.dp))
 
         Button(
@@ -82,7 +71,9 @@ fun StartScreen(navController: NavController) {
                 .width(250.dp)
                 .clip(RoundedCornerShape(10.dp))
                 .background(colorPrimary),
-            onClick = { navController.navigate("quizEnterCodeScreen") }) {
+
+            onClick = { navController.navigate("quizEnterCodeScreen") }
+        ) {
             androidx.compose.material3.Text("Jogar")
         }
 
@@ -93,7 +84,9 @@ fun StartScreen(navController: NavController) {
                 .width(250.dp)
                 .clip(RoundedCornerShape(10.dp))
                 .background(colorPrimary),
-            onClick = { navController.navigate("obraScreen") }) {
+
+            onClick = { navController.navigate("obraScreen") }
+        ) {
             androidx.compose.material3.Text("Ver Obras")
         }
 
@@ -102,18 +95,20 @@ fun StartScreen(navController: NavController) {
         Text(
             text = buildAnnotatedString {
                 withStyle(style = SpanStyle(textDecoration = TextDecoration.Underline)) { // Sublinhado em todo o texto
-                    append("Entrar como Administrador")
+                    append("Entrar como ")
                     withStyle(
                         style = SpanStyle(
                             fontWeight = FontWeight.Bold
                         )
                     ) {
-                        append("sitamet.")
+                        append("Administrador.")
                     }
                 }
             },
-            color = Color.Black.copy(alpha = 0.5f), // Reduzir opacidade
-            modifier = Modifier.width(250.dp).clickable { navController.navigate("loginScreen") },
+            color = textColor.copy(alpha = 0.5f), // Usa a cor de texto do tema com opacidade reduzida
+            modifier = Modifier
+                .width(250.dp)
+                .clickable { navController.navigate("loginScreen") },
             textAlign = TextAlign.End
         )
     }
