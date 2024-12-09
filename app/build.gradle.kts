@@ -74,6 +74,7 @@ dependencies {
     implementation ("com.squareup.picasso:picasso:2.71828")
 
     implementation(libs.firebase.firestore.ktx)
+    implementation(libs.androidx.ui.text.google.fonts)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

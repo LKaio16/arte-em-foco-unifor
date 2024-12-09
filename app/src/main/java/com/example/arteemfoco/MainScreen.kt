@@ -38,7 +38,7 @@ fun AdminScreenScaffold(navController: NavHostController, content: @Composable (
         bottomBar = {
             NavigationBar(
                 containerColor = MaterialTheme.colorScheme.primary, // Cor do fundo do NavigationBar
-                contentColor = MaterialTheme.colorScheme.primary // Cor do pconteúdo do NavigationBar
+
             ) {
                 bottomNavigationItems.forEach { item ->
                     if (item.route == Screen.ObraAdmin.route || item.route == Screen.QuizAdmin.route) {
@@ -48,11 +48,11 @@ fun AdminScreenScaffold(navController: NavHostController, content: @Composable (
                             label = { Text(item.title) },
                             icon = { Icon(item.icon, contentDescription = item.title) },
                             colors = NavigationBarItemColors(
-                                selectedIconColor = MaterialTheme.colorScheme.primaryContainer, // Cor do ícone selecionado
-                                selectedTextColor = MaterialTheme.colorScheme.primaryContainer, // Cor do texto selecionado
+                                selectedIconColor = MaterialTheme.colorScheme.onPrimary, // Cor do ícone selecionado
+                                selectedTextColor = MaterialTheme.colorScheme.onPrimary, // Cor do texto selecionado
                                 selectedIndicatorColor = MaterialTheme.colorScheme.primary, // Cor do indicador selecionado
-                                unselectedIconColor = MaterialTheme.colorScheme.onSurface, // Cor do ícone não selecionado
-                                unselectedTextColor = MaterialTheme.colorScheme.onSurface, // Cor do texto não selecionado
+                                unselectedIconColor = MaterialTheme.colorScheme.outline, // Cor do ícone não selecionado
+                                unselectedTextColor = MaterialTheme.colorScheme.outline, // Cor do texto não selecionado
                                 disabledIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f), // Cor do ícone desabilitado
                                 disabledTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f) // Cor do texto desabilitado
                             )

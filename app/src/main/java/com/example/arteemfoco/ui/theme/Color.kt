@@ -1,4 +1,4 @@
-package com.example.compose
+package com.example.arteemfoco.ui.theme
 import androidx.compose.ui.graphics.Color
 
 val primaryLight = Color(0xFF0739DA)
@@ -216,10 +216,3 @@ val surfaceContainerLowDarkHighContrast = Color(0xFF1A1B24)
 val surfaceContainerDarkHighContrast = Color(0xFF1E1F28)
 val surfaceContainerHighDarkHighContrast = Color(0xFF282933)
 val surfaceContainerHighestDarkHighContrast = Color(0xFF33343E)
-
-
-
-
-
-
-

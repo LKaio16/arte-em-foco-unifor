@@ -2,7 +2,6 @@ package com.example.arteemfoco.screens.admin
 
 import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,8 +26,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.arteemfoco.AdminScreenScaffold
 import com.example.arteemfoco.Screen
-//import com.example.arteemfoco.screens.quizzes.QuizCard
-//import com.example.arteemfoco.screens.quizzes.Quiz
 import com.google.firebase.firestore.FirebaseFirestore
 
 data class Quiz(
@@ -44,7 +42,7 @@ fun QuizAdminScreen(navController: NavHostController) {
         var quizzes by remember { mutableStateOf(listOf<com.example.arteemfoco.screens.admin.Quiz>()) }
         var isLoading by remember { mutableStateOf(true) }
 
-        // Busca as obras no Firestore
+        // Busca os quizzes no Firestore
         LaunchedEffect(Unit) {
             db.collection("quizzes")
                 .get()
@@ -55,7 +53,6 @@ fun QuizAdminScreen(navController: NavHostController) {
                             description = doc.getString("description") ?: "",
                             alternatives = doc.get("alternatives") as? List<String> ?: emptyList(),
                             id = doc.id // Armazenamos o ID aqui
-
                         )
                     }
                     quizzes = quizzesList
@@ -69,14 +66,14 @@ fun QuizAdminScreen(navController: NavHostController) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White)
-                .padding(innerPadding)  // Aplicar o padding fornecido pelo Scaffold aqui
+                .background(MaterialTheme.colorScheme.background)
+                .padding(innerPadding)
         ) {
             Text(
                 text = "Quiz",
-                fontSize = 19.sp,
+                fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .padding(top = 40.dp) // Espaçamento do topo
@@ -100,26 +97,22 @@ fun QuizAdminScreen(navController: NavHostController) {
                         Spacer(Modifier.height(10.dp))
                     }
 
-
-
                     Spacer(Modifier.height(20.dp))
                 }
             }
-            // Botão flutuante deve ser colocado fora da Column para evitar que seja empurrado pela lista
+
+            // Botão flutuante
             FloatingActionButton(
                 onClick = { navController.navigate(Screen.QuizAddAdmin.route) },
-                backgroundColor = Color.Gray,
+                backgroundColor = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(
-                        bottom = 16.dp,
-                        end = 16.dp
-                    )  // Ajuste este padding para evitar a BottomBar
+                    .padding(bottom = 16.dp, end = 16.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = "Add",
-                    tint = Color.White
+                    tint = MaterialTheme.colorScheme.onSecondary
                 )
             }
 
@@ -127,74 +120,74 @@ fun QuizAdminScreen(navController: NavHostController) {
     }
 }
 
-
 @Composable
-fun QuizCardAdmin(title: String, quizId: String, onDelete: (String) -> Unit,navController: NavController) {
+fun QuizCardAdmin(
+    title: String,
+    quizId: String,
+    onDelete: (String) -> Unit,
+    navController: NavController,
+) {
     val db = FirebaseFirestore.getInstance()
 
     Box(
         modifier = Modifier
             .width(350.dp)
-            .background(Color.Gray, shape = RoundedCornerShape(16.dp))
+            .background(
+                MaterialTheme.colorScheme.primaryContainer,
+                shape = RoundedCornerShape(16.dp)
+            )
             .height(120.dp)
             .clickable {
                 navController.navigate("quizViewScreen/$quizId")
             }
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
-            // Caixa escura à esquerda
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .width(140.dp)
-                    .background(
-                        Color.Blue,
-                        shape = RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp)
-                    )
-            )
 
             // Coluna com título e subtítulo à direita
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(start = 16.dp, end = 35.dp),
+                    .padding(start = 35.dp, end = 35.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.Start
             ) {
-                Text(text = title, fontSize = 15.sp, color = Color.White)
+                Text(
+                    text = title,
+                    fontSize = 15.sp,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    fontWeight = FontWeight.Bold
+                )
             }
-
-
         }
 
+        // Ícone de exclusão
         Box(
             modifier = Modifier
-                .padding(end = 8.dp, top = 8.dp, start = 5.dp)
+                .padding(end = 20.dp, top = 8.dp, start = 5.dp)
                 .align(Alignment.CenterEnd)
                 .clickable {
-                    // Exclui a quiz do Firestore
+                    // Exclui o quiz do Firestore
                     db
                         .collection("quizzes")
                         .document(quizId)
                         .delete()
                         .addOnSuccessListener {
-                            Log.d("Firestore", "Obra excluída com sucesso!")
-                            onDelete(quizId) // Atualiza a lista de obras na tela
+                            Log.d("Firestore", "Quiz excluído com sucesso!")
+                            onDelete(quizId) // Atualiza a lista de quizzes na tela
                         }
                         .addOnFailureListener { e ->
-                            Log.w("Firestore", "Erro ao excluir obra", e)
+                            Log.w("Firestore", "Erro ao excluir quiz", e)
                         }
                 }
         ) {
             Icon(
                 imageVector = Icons.Default.Delete,
                 contentDescription = "Delete",
-                tint = Color.White
+                tint = MaterialTheme.colorScheme.onPrimaryContainer
             )
         }
 
     }
-
 }
 
 @Preview

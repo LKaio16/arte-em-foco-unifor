@@ -28,6 +28,7 @@ import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
@@ -42,75 +43,75 @@ import com.squareup.picasso.Picasso
 @Composable
 fun ObraScreen(navController: NavHostController) {
 
-        val db = FirebaseFirestore.getInstance()
-        var obras by remember { mutableStateOf(listOf<com.example.arteemfoco.screens.admin.Obra>()) }
-        var isLoading by remember { mutableStateOf(true) }
+    val db = FirebaseFirestore.getInstance()
+    var obras by remember { mutableStateOf(listOf<com.example.arteemfoco.screens.admin.Obra>()) }
+    var isLoading by remember { mutableStateOf(true) }
 
-        // Busca as obras no Firestore
-        LaunchedEffect(Unit) {
-            db.collection("obras")
-                .get()
-                .addOnSuccessListener { result ->
-                    val obrasList = result.map { document ->
-                        com.example.arteemfoco.screens.admin.Obra(
-                            id = document.id,
-                            title = document.getString("title") ?: "",
-                            author = document.getString("author") ?: "",
-                            imageUrl = document.getString("imageUrl") ?: ""
-                        )
-                    }
-                    obras = obrasList
-                    isLoading = false
+    // Busca as obras no Firestore
+    LaunchedEffect(Unit) {
+        db.collection("obras")
+            .get()
+            .addOnSuccessListener { result ->
+                val obrasList = result.map { document ->
+                    com.example.arteemfoco.screens.admin.Obra(
+                        id = document.id,
+                        title = document.getString("title") ?: "",
+                        author = document.getString("author") ?: "",
+                        imageUrl = document.getString("imageUrl") ?: ""
+                    )
                 }
-                .addOnFailureListener { exception ->
-                    Log.w("Firestore", "Erro ao buscar obras: ", exception)
-                }
-        }
-
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White)
-                  // Aplicar o padding fornecido pelo Scaffold aqui
-        ) {
-            Text(
-                text = "Obra",
-                fontSize = 19.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(top = 40.dp) // Espaçamento do topo
-            )
-
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxSize()
-            ) {
-                if (isLoading) {
-                    CircularProgressIndicator()  // Mostra o indicador de carregamento
-                } else {
-                    obras.forEach { obra ->
-                        ObraCard(
-                            title = obra.title,
-                            author = obra.author,
-                            obraId = obra.id,
-                            onDelete = { obraId ->
-                                obras = obras.filter { it.id != obraId }
-                            },
-                            navController = navController,
-                            imageUrl = obra.imageUrl
-                        )
-                        Spacer(Modifier.height(10.dp))
-                    }
-
-                    Spacer(Modifier.height(20.dp))
-                }
+                obras = obrasList
+                isLoading = false
             }
-
-        }
+            .addOnFailureListener { exception ->
+                Log.w("Firestore", "Erro ao buscar obras: ", exception)
+            }
     }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+
+    ) {
+        Text(
+            text = "Obra",
+            fontSize = 22.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(top = 45.dp) // Espaçamento do topo
+        )
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            if (isLoading) {
+                CircularProgressIndicator()  // Mostra o indicador de carregamento
+            } else {
+                obras.forEach { obra ->
+                    ObraCard(
+                        title = obra.title,
+                        author = obra.author,
+                        obraId = obra.id,
+                        onDelete = { obraId ->
+                            obras = obras.filter { it.id != obraId }
+                        },
+                        navController = navController,
+                        imageUrl = obra.imageUrl
+                    )
+                    Spacer(Modifier.height(10.dp))
+                }
+
+                Spacer(Modifier.height(20.dp))
+            }
+        }
+
+    }
+}
 
 
 @Composable
@@ -135,7 +136,10 @@ fun ObraCard(
     Box(
         modifier = Modifier
             .width(350.dp)
-            .background(Color.Gray, shape = RoundedCornerShape(16.dp))
+            .background(
+                MaterialTheme.colorScheme.primaryContainer,
+                shape = RoundedCornerShape(16.dp)
+            )
             .height(120.dp)
             .clickable {
                 navController.navigate("obraView/$obraId")
@@ -147,7 +151,12 @@ fun ObraCard(
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(140.dp)
-                    .clip(RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp)) // Recorte arredondado
+                    .clip(
+                        RoundedCornerShape(
+                            topStart = 12.dp,
+                            bottomStart = 12.dp
+                        )
+                    ) // Recorte arredondado
                     .background(Color.Blue)
             ) {
 
@@ -172,7 +181,7 @@ fun ObraCard(
                     }
                 )
             }
-            // Coluna com título e subtítulo à direita
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -180,12 +189,17 @@ fun ObraCard(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.Start
             ) {
-                Text(text = title, fontSize = 15.sp, color = Color.White)
+                Text(
+                    text = title,
+                    fontSize = 15.sp,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    fontWeight = FontWeight.Bold
+                )
                 Spacer(Modifier.height(2.dp))
                 Text(
                     text = author,
                     fontSize = 11.sp,
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                     modifier = Modifier.width(170.dp)
                 )
             }

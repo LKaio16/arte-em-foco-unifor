@@ -21,6 +21,7 @@ navigationCompose = "2.8.2"
 navigationRuntimeKtx = "2.8.2"
 firebaseFirestoreKtx = "25.1.1"
 firebaseStorageKtx = "21.0.1"
+uiTextGoogleFonts = "1.7.5"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -49,6 +50,7 @@ androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navig
 material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
 firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx", version.ref = "firebaseStorageKtx" }
+androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

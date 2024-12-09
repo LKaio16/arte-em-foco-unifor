@@ -8,7 +8,6 @@ package com.example.arteemfoco.screens.admin
 //noinspection UsingMaterialAndMaterial3Libraries
 import android.util.Log
 import android.widget.ImageView
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,6 +28,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -39,32 +39,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import coil3.compose.AsyncImage
-import coil3.compose.LocalPlatformContext
-import coil3.compose.SubcomposeAsyncImage
-import coil3.compose.rememberAsyncImagePainter
-import coil3.compose.rememberConstraintsSizeResolver
-import coil3.request.CachePolicy
-import coil3.request.ImageRequest
-import coil3.request.crossfade
 import com.example.arteemfoco.AdminScreenScaffold
 import com.example.arteemfoco.R
 import com.example.arteemfoco.Screen
 import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
-import kotlin.math.log
 
 data class Obra(
     val id: String = "",
@@ -106,14 +91,14 @@ fun ObraAdminScreen(navController: NavHostController) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White)
-                .padding(innerPadding)  // Aplicar o padding fornecido pelo Scaffold aqui
+                .background(MaterialTheme.colorScheme.background)
+                .padding(innerPadding)
         ) {
             Text(
                 text = "Obra",
-                fontSize = 19.sp,
+                fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .padding(top = 40.dp) // Espaçamento do topo
@@ -147,34 +132,23 @@ fun ObraAdminScreen(navController: NavHostController) {
             // Botão flutuante deve ser colocado fora da Column para evitar que seja empurrado pela lista
             FloatingActionButton(
                 onClick = { navController.navigate(Screen.ObraAddAdmin.route) },
-                backgroundColor = Color.Gray,
+                backgroundColor = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(
                         bottom = 16.dp,
                         end = 16.dp
-                    )  // Ajuste este padding para evitar a BottomBar
+                    )
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = "Add",
-                    tint = Color.White
+                    tint = MaterialTheme.colorScheme.onSecondary
                 )
             }
 
         }
     }
-}
-
-
-@Composable
-@Preview
-fun ObraAdminScreenPreview() {
-    val navController = rememberNavController()
-//    ObraCardAdmin(
-//        "afaaaaaaaaaaaaaa",
-//        "asdasdaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-//    )
 }
 
 
@@ -192,7 +166,10 @@ fun ObraCardAdmin(
     Box(
         modifier = Modifier
             .width(350.dp)
-            .background(Color.Gray, shape = RoundedCornerShape(16.dp))
+            .background(
+                MaterialTheme.colorScheme.primaryContainer,
+                shape = RoundedCornerShape(16.dp)
+            )
             .height(120.dp)
             .clickable {
                 navController.navigate("obraAdminView/$obraId")
@@ -204,7 +181,12 @@ fun ObraCardAdmin(
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(140.dp)
-                    .clip(RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp)) // Recorte arredondado
+                    .clip(
+                        RoundedCornerShape(
+                            topStart = 12.dp,
+                            bottomStart = 12.dp
+                        )
+                    ) // Recorte arredondado
                     .background(Color.Blue)
             ) {
 
@@ -216,7 +198,7 @@ fun ObraCardAdmin(
                     factory = { context ->
                         ImageView(context).apply {
                             scaleType = ImageView.ScaleType.CENTER_CROP
-                            clipToOutline = true // Garante que o recorte será aplicado
+                            clipToOutline = true
                         }
                     },
                     modifier = Modifier.fillMaxSize(),
@@ -237,12 +219,17 @@ fun ObraCardAdmin(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.Start
             ) {
-                Text(text = title, fontSize = 15.sp, color = Color.White)
+                Text(
+                    text = title,
+                    fontSize = 15.sp,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    fontWeight = FontWeight.Bold
+                )
                 Spacer(Modifier.height(2.dp))
                 Text(
                     text = author,
                     fontSize = 11.sp,
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                     modifier = Modifier.width(170.dp)
                 )
             }
@@ -271,7 +258,7 @@ fun ObraCardAdmin(
             Icon(
                 imageVector = Icons.Default.Delete,
                 contentDescription = "Delete",
-                tint = Color.White
+                tint = MaterialTheme.colorScheme.onPrimaryContainer
             )
         }
     }

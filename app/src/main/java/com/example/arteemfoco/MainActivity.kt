@@ -26,12 +26,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.compose.AppTheme
+import com.example.arteemfoco.ui.theme.AppTheme
+
 import dagger.hilt.android.AndroidEntryPoint
 import com.google.firebase.FirebaseApp
 
@@ -43,7 +42,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         FirebaseApp.initializeApp(this)
         setContent {
-            AppTheme   {
+
+            AppTheme {
                 // Crie e configure o NavController aqui
                 val navController = rememberNavController()
 
@@ -58,14 +58,11 @@ class MainActivity : ComponentActivity() {
 }
 
 
-
-
-
 @Composable
 fun CaixaTexto(
     placeholder: String,
     text: String,
-    onTextChange: (String) -> Unit
+    onTextChange: (String) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -102,7 +99,6 @@ fun CaixaTexto(
         )
     }
 }
-
 
 
 @Composable
