@@ -4,17 +4,17 @@ import android.widget.ImageView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -47,106 +47,106 @@ fun ObraAdminViewScreen(navController: NavController, obraId: String) {
             .addOnFailureListener { e -> e.printStackTrace() }
     }
 
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
+            .padding(16.dp)
     ) {
-        // Botão Voltar
-        Box(
-            modifier = Modifier
-                .padding(start = 17.dp, top = 40.dp)
-                .clickable { navController.popBackStack() }
-        ) {
+        // Cabeçalho com botão "Voltar" e título
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 17.dp, top = 40.dp)) {
             Icon(
                 imageVector = Icons.Default.ArrowBack,
                 contentDescription = "Voltar",
-                tint = Color.Black
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .size(30.dp)
+                    .clickable { navController.popBackStack() }
+
+            )
+
+            Text(
+                text = "Detalhes da Obra",
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.align(Alignment.Center)
             )
         }
 
-        // Título centralizado
-        Text(
-            text = "Detalhes da Obra",
-            fontSize = 19.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black,
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 40.dp),
-            textAlign = TextAlign.Center
-        )
+        Spacer(modifier = Modifier.height(24.dp))
 
-        // Conteúdo da página
         if (obra == null) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            // Indicador de carregamento enquanto os dados são buscados
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
         } else {
+            // Conteúdo principal da tela
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
+                verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.fillMaxSize()
             ) {
-
+                // Imagem clicável
                 Box(
                     modifier = Modifier
-                        .background(Color.Gray)
-                        .size(350.dp, 250.dp)
+                        .size(300.dp, 200.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(MaterialTheme.colorScheme.surface)
                         .clickable { isDialogOpen = true }
                 ) {
                     AndroidView(
                         factory = { context ->
                             ImageView(context).apply {
                                 scaleType = ImageView.ScaleType.CENTER_CROP
-                                adjustViewBounds = false
                             }
                         },
                         update = { imageView ->
                             Picasso.get()
                                 .load(obra!!.imageUrl)
-                                .placeholder(R.drawable.ic_launcher_background) // Imagem de carregamento
-                                .error(R.drawable.ic_launcher_foreground)       // Imagem de erro
+                                .placeholder(R.drawable.ic_launcher_background)
+                                .error(R.drawable.ic_launcher_foreground)
                                 .into(imageView)
                         },
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.Gray)
-                            .clipToBounds() // Garante que o conteúdo seja cortado no tamanho da Box
+                        modifier = Modifier.fillMaxSize()
                     )
                 }
 
+                // Detalhes da obra
+                Text(
+                    text = obra!!.title,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    textAlign = TextAlign.Center
+                )
 
-                Spacer(Modifier.height(20.dp))
+                Text(
+                    text = obra!!.author,
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    textAlign = TextAlign.Center
+                )
 
-                // Informações da obra
-                Column(
-                    modifier = Modifier
-                        .width(300.dp)
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(
-                        text = obra!!.title,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = obra!!.author,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Normal
-                    )
-                    Spacer(Modifier.height(10.dp))
-                    Text(
-                        text = obra!!.description,
-                        fontSize = 12.sp,
-                        textAlign = TextAlign.Center
-                    )
-                }
+                Divider(
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
+                    thickness = 1.dp,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+
+                Text(
+                    text = obra!!.description,
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    textAlign = TextAlign.Justify
+                )
             }
         }
     }
 
-    // Diálogo para exibir imagem em tela cheia
+    // Diálogo para exibir a imagem em tela cheia
     if (isDialogOpen && obra != null) {
         Dialog(onDismissRequest = { isDialogOpen = false }) {
             Box(
@@ -164,8 +164,8 @@ fun ObraAdminViewScreen(navController: NavController, obraId: String) {
                     update = { imageView ->
                         Picasso.get()
                             .load(obra!!.imageUrl)
-                            .placeholder(R.drawable.ic_launcher_background) // Imagem de carregamento
-                            .error(R.drawable.ic_launcher_foreground)       // Imagem de erro
+                            .placeholder(R.drawable.ic_launcher_background)
+                            .error(R.drawable.ic_launcher_foreground)
                             .into(imageView)
                     },
                     modifier = Modifier.fillMaxSize()
@@ -173,11 +173,4 @@ fun ObraAdminViewScreen(navController: NavController, obraId: String) {
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun ObraAdminViewScreenPreview() {
-    val navController = rememberNavController()
-    ObraAdminViewScreen(navController = navController, obraId = "exampleId")
 }

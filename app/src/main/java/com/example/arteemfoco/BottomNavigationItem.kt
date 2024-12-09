@@ -13,13 +13,15 @@ data class BottomNavigationItem(
 
 val bottomNavigationItems = listOf(
     BottomNavigationItem(
-        title = "Obras",
-        icon = Icons.Filled.Apps,
-        route = "obraAdminScreen"
-    ),
-    BottomNavigationItem(
         title = "Quiz",
         icon = Icons.Filled.AutoAwesomeMosaic,
         route = "quizAdminScreen"
+    ),
+
+    BottomNavigationItem(
+        title = "Obras",
+        icon = Icons.Filled.Apps,
+        route = "obraAdminScreen"
     )
+
 )

@@ -26,7 +26,6 @@ import com.example.arteemfoco.screens.obras.ObraScreen
 import com.example.arteemfoco.screens.obras.ObraViewScreen
 import com.example.arteemfoco.screens.quiz.QuizEndScreen
 import com.example.arteemfoco.screens.quiz.QuizEnterCodeScreen
-import com.example.arteemfoco.screens.quiz.QuizEnterNameScreen
 import com.example.arteemfoco.screens.quiz.QuizScreen
 
 
@@ -42,9 +41,6 @@ fun SetupAdminNavGraph(navController: NavHostController, modifier: Modifier = Mo
             QuizEnterCodeScreen(
                 navController = navController, quizViewModel = quizViewModel)
         }
-
-        composable(Screen.QuizEnterName.route) { QuizEnterNameScreen(navController) }
-
 
         composable(Screen.Obra.route) { ObraScreen(navController) }
 

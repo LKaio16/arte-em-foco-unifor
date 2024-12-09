@@ -9,7 +9,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.*
@@ -24,16 +24,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil3.compose.rememberAsyncImagePainter
-import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-
 import java.util.*
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ObraAddAdminScreen(navController: NavController) {
-
-    // Estado para os campos de entrada
     var title by remember { mutableStateOf("") }
     var author by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
@@ -41,72 +38,40 @@ fun ObraAddAdminScreen(navController: NavController) {
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     var isUploading by remember { mutableStateOf(false) }
 
-    // Lançador para selecionar imagens
     val selectImageLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        imageUri = uri
-    }
+    ) { uri: Uri? -> imageUri = uri }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
-        // Ícone de voltar no canto superior esquerdo
-        Box(
-            modifier = Modifier.padding(start = 17.dp, top = 37.dp),
-            contentAlignment = Alignment.BottomEnd
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Voltar",
-                tint = Color.Black,
-                modifier = Modifier
-                    .clickable { navController.popBackStack() }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Nova Obra") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Voltar"
+                        )
+                    }
+                },
+
             )
         }
-
-        // Texto "Salvar" no canto superior direito
-        Text(
-            text = "Salvar",
-            fontSize = 16.sp,
-            color = Color.Blue,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(top = 37.dp, end = 17.dp)
-                .clickable {
-                    navController.popBackStack()
-                }
-        )
-
-        Text(
-            text = "Nova Obra",
-            fontSize = 19.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black,
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 40.dp),
-            textAlign = TextAlign.Center
-        )
-
+    ) { paddingValues ->
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
             modifier = Modifier
+                .padding(paddingValues)
                 .fillMaxSize()
-                .padding(top = 0.dp)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Box para seleção de imagem
+            // Imagem
             Box(
                 modifier = Modifier
-                    .background(Color.Gray)
-                    .size(300.dp, 150.dp)
-                    .clickable {
-                        selectImageLauncher.launch("image/*")
-                    },
+                    .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f), RoundedCornerShape(8.dp))
+                    .fillMaxWidth()
+                    .height(150.dp)
+                    .clickable { selectImageLauncher.launch("image/*") },
                 contentAlignment = Alignment.Center
             ) {
                 if (imageUri != null) {
@@ -116,78 +81,52 @@ fun ObraAddAdminScreen(navController: NavController) {
                         modifier = Modifier.fillMaxSize()
                     )
                 } else {
-                    Text(
-                        text = "Clique para adicionar uma imagem",
-                        color = Color.White,
-                        textAlign = TextAlign.Center
-                    )
+                    Text("Clique para adicionar uma imagem", textAlign = TextAlign.Center)
                 }
             }
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-            // Campo de Título
-            Text(text = "Título", fontSize = 16.sp, fontWeight = FontWeight.Bold)
-            Spacer(Modifier.height(8.dp))
-            TextField(
+            // Título
+            OutlinedTextField(
                 value = title,
                 onValueChange = { title = it },
-                modifier = Modifier
-                    .background(Color.LightGray)
-                    .size(300.dp, 56.dp),
-                placeholder = { Text("Digite o título") }
+                label = { Text("Título") },
+                modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-            // Campo de Autor
-            Text(text = "Autor", fontSize = 16.sp, fontWeight = FontWeight.Bold)
-            Spacer(Modifier.height(8.dp))
-            TextField(
+            // Autor
+            OutlinedTextField(
                 value = author,
                 onValueChange = { author = it },
-                modifier = Modifier
-                    .background(Color.LightGray)
-                    .size(300.dp, 56.dp),
-                placeholder = { Text("Digite o autor") }
+                label = { Text("Autor") },
+                modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-            // Campo de Descrição
-            Text(text = "Descrição", fontSize = 16.sp, fontWeight = FontWeight.Bold)
-            Spacer(Modifier.height(8.dp))
-            TextField(
+            // Descrição
+            OutlinedTextField(
                 value = description,
                 onValueChange = { description = it },
-                modifier = Modifier
-                    .background(Color.LightGray)
-                    .size(300.dp, 56.dp),
-                placeholder = { Text("Digite a descrição") }
+                label = { Text("Descrição") },
+                modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-            // Campo de Audio-Descrição
-            Text(text = "Audio-Descrição", fontSize = 16.sp, fontWeight = FontWeight.Bold)
-            Spacer(Modifier.height(8.dp))
-            TextField(
+            // Audio-Descrição
+            OutlinedTextField(
                 value = audioDescription,
                 onValueChange = { audioDescription = it },
-                modifier = Modifier
-                    .background(Color.LightGray)
-                    .size(300.dp, 100.dp),
-                placeholder = { Text("Digite a audio-descrição") }
+                label = { Text("Audio-Descrição") },
+                modifier = Modifier.fillMaxWidth()
             )
-        }
 
-        // Botão de "Adicionar Obra"
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = 50.dp, end = 20.dp),
-            contentAlignment = Alignment.BottomEnd
-        ) {
+            Spacer(modifier = Modifier.height(24.dp))
+
             Button(
                 onClick = {
                     if (imageUri != null) {
@@ -198,7 +137,6 @@ fun ObraAddAdminScreen(navController: NavController) {
                         imageRef.putFile(imageUri!!)
                             .addOnSuccessListener {
                                 imageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
-                                    val db = FirebaseFirestore.getInstance()
                                     val obra = hashMapOf(
                                         "title" to title,
                                         "author" to author,
@@ -206,8 +144,7 @@ fun ObraAddAdminScreen(navController: NavController) {
                                         "audioDescription" to audioDescription,
                                         "imageUrl" to downloadUrl.toString()
                                     )
-
-                                    db.collection("obras").add(obra)
+                                    FirebaseFirestore.getInstance().collection("obras").add(obra)
                                         .addOnSuccessListener {
                                             Log.d("Firestore", "Obra adicionada com sucesso!")
                                             navController.popBackStack()
@@ -217,27 +154,26 @@ fun ObraAddAdminScreen(navController: NavController) {
                                         }
                                 }
                             }
-                            .addOnFailureListener {
-                                Log.e("Firebase", "Erro ao fazer upload da imagem", it)
-                            }
-                            .addOnCompleteListener {
-                                isUploading = false
-                            }
-                    } else {
-                        Log.e("Firebase", "Nenhuma imagem selecionada")
+                            .addOnFailureListener { Log.e("Firebase", "Erro ao fazer upload", it) }
+                            .addOnCompleteListener { isUploading = false }
                     }
                 },
-                enabled = !isUploading
+                enabled = !isUploading,
+                modifier = Modifier.fillMaxWidth(),
+
             ) {
-                Text(text = if (isUploading) "Salvando..." else "Adicionar Obra")
+                Text(
+                    text = if (isUploading) "Salvando..." else "Adicionar Obra",
+                    color = if (isUploading) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onPrimary
+                )
+
             }
         }
     }
 }
 
-@Composable
 @Preview
+@Composable
 fun ObraAddAdminScreenPreview() {
-    val navController = rememberNavController()
-    ObraAddAdminScreen(navController)
+    ObraAddAdminScreen(navController = rememberNavController())
 }

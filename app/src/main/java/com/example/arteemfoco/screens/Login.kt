@@ -3,21 +3,25 @@ package com.example.arteemfoco.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -29,43 +33,61 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.arteemfoco.CaixaTexto
 import com.example.arteemfoco.Screen
 
 @Composable
 fun LoginScreen(navController: NavController) {
+    var user by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color.White)
+            .background(color = MaterialTheme.colorScheme.background)
     ) {
         androidx.compose.material3.Text(
-            text = "LOGIN",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold
+            text = "Login",
+            fontSize = 25.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground
         )
-        Spacer(Modifier.height(10.dp))
-//        CaixaTexto("Usuário")
-        Spacer(Modifier.height(10.dp))
-//        CaixaTexto("Senha")
         Spacer(Modifier.height(20.dp))
-        val colorPrimary = androidx.compose.material3.MaterialTheme.colorScheme.primary
-//      teste cor
+
+        TextField(
+            value = user,
+            onValueChange = { user = it },
+            label = { androidx.compose.material3.Text("Usuário") },
+            modifier = Modifier
+                .width(300.dp)
+                .padding(horizontal = 16.dp),
+            shape = RoundedCornerShape(10.dp),
+            )
+
+        Spacer(Modifier.height(10.dp))
+
+
+        TextField(
+            value = password,
+            onValueChange = { password = it },
+            label = { androidx.compose.material3.Text("Senha") },
+            modifier = Modifier
+                .width(300.dp)
+                .padding(horizontal = 16.dp),
+            shape = RoundedCornerShape(10.dp),
+        )
+
+
+        Spacer(Modifier.height(20.dp))
 
         Button(
             modifier = Modifier
                 .width(250.dp)
                 .clip(RoundedCornerShape(10.dp))
-                .background(colorPrimary),
+                .background(MaterialTheme.colorScheme.primary),
             onClick = {
                 navController.navigate(Screen.Main.route)
-//                    popUpTo(Screen.Start.route) {
-//                        inclusive = true
-                     // Limpa a pilha até StartScreen
-//                    launchSingleTop = true // Garante que MainScreen não seja recriada
-//                }
             }
         ) {
             androidx.compose.material3.Text("Entrar")
@@ -76,17 +98,17 @@ fun LoginScreen(navController: NavController) {
         Text(
             text = buildAnnotatedString {
                 withStyle(style = SpanStyle(textDecoration = TextDecoration.Underline)) { // Sublinhado em todo o texto
-                    append("Vorem ipsum dolor ")
+                    append("Não possui conta? ")
                     withStyle(
                         style = SpanStyle(
                             fontWeight = FontWeight.Bold
                         )
                     ) {
-                        append("sitamet.")
+                        append("Cadastre-se.")
                     }
                 }
             },
-            color = Color.Black.copy(alpha = 0.5f), // Reduzir opacidade
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f), // Reduzir opacidade
             modifier = Modifier
                 .width(250.dp)
                 .clickable { navController.navigate("registerScreen") },

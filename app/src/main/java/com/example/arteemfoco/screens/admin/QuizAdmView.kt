@@ -5,7 +5,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
@@ -45,36 +46,41 @@ fun QuizAdminViewScreen(navController: NavController, quizId: String) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
-            .padding(start = 17.dp, top = 37.dp),
+            .background(MaterialTheme.colorScheme.background)
+            .padding(16.dp)
     ) {
-        // Ícone de voltar no topo esquerdo
+        // Ícone de voltar
         Icon(
             imageVector = Icons.Default.ArrowBack,
             contentDescription = "Voltar",
-            tint = Color.Black,
+            tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier
-                .padding(start = 16.dp, top = 16.dp)
+                .padding(start = 17.dp, top = 40.dp)
                 .clickable { navController.popBackStack() }
-                .size(24.dp)
+                .size(30.dp)
         )
 
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)) {
-            // Título
-            Text(
-                text = "Visualizar Quiz",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
+        // Título
+        Text(
+            text = "Visualizar Quiz",
+            fontSize = 22.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(top = 40.dp)
+        )
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Lista de perguntas
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
+        // Lista de perguntas
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.TopCenter)
+                .padding(top = 80.dp, bottom = 180.dp) // Ajuste o espaço entre o título e as perguntas
+        ) {
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 items(questions) { question ->
                     QuestionCard(question = question)
                     Spacer(modifier = Modifier.height(8.dp))
@@ -82,65 +88,91 @@ fun QuizAdminViewScreen(navController: NavController, quizId: String) {
             }
         }
 
-        // Botão "Ver Ranking"
-        Column(
+
+        // Box com código e botões no final
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 80.dp) // Ajuste para não cobrir o outro botão
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(20.dp)
+                .align(Alignment.BottomCenter) // Posiciona no fundo da tela
         ) {
-
-            Text(text = "Código do Quiz: ${quizId.take(4)}")
-
-            Button(
-                onClick = { navController.navigate("rankingScreen/$quizId") },
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Ver Ranking")
-            }
+                // Código do Quiz
+                Text(
+                    text = "Código do Quiz: ${quizId.take(4)}",
+                    fontSize = 18.sp,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
 
-            Button(
-                onClick = { navController.navigate("quizAdminScreen/$quizId") },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Adicionar Pergunta")
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Botões
+                Button(
+                    onClick = { navController.navigate("rankingScreen/$quizId") },
+                    modifier = Modifier.width(200.dp),
+                ) {
+                    Text(
+                        text = "Ver Ranking",
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Button(
+                    onClick = { navController.navigate("quizAdminScreen/$quizId") },
+                    modifier = Modifier.width(200.dp)
+                ) {
+                    Text(
+                        text = "Adicionar Pergunta",
+                        color = MaterialTheme.colorScheme.onSecondary
+                    )
+                }
             }
         }
     }
 }
+
 
 @Composable
 fun QuestionCard(question: Question) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.LightGray)
-            .padding(8.dp),
-        elevation = 4.dp
+            .padding(horizontal = 8.dp),
+        shape = RoundedCornerShape(12.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = "Título: ${question.title}", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "Título: ${question.title}",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "Descrição: ${question.description}",
                 fontSize = 14.sp,
-                color = Color.DarkGray
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "Alternativas:", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = "Alternativas:",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.primary
+            )
             question.alternatives.forEachIndexed { index, alternative ->
                 Text(
                     text = "- $alternative ${if (index == question.correctAnswerIndex) "(Correta)" else ""}",
-                    fontSize = 14.sp
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
     }
-}
-
-@Preview
-@Composable
-private fun QuizAdminViewPreview() {
-    val navController = rememberNavController()
-    QuizAdminViewScreen(navController, "quiz123")
 }

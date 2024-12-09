@@ -11,8 +11,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,6 +26,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -69,36 +71,45 @@ fun StartScreen(navController: NavController) {
         Button(
             modifier = Modifier
                 .width(250.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .background(colorPrimary),
-
+                .height(50.dp)
+                .clip(RoundedCornerShape(10.dp)),
             onClick = { navController.navigate("quizEnterCodeScreen") }
         ) {
-            androidx.compose.material3.Text("Jogar")
+            androidx.compose.material3.Text(
+                text = "Jogar",
+                fontWeight = FontWeight.Bold, // Define o texto como bold
+                fontSize = 16.sp, // Define um tamanho de texto, caso queira ajustar
+                color = MaterialTheme.colorScheme.onPrimary // Garante contraste
+            )
         }
 
-        Spacer(Modifier.height(10.dp))
+
+        Spacer(Modifier.height(15.dp))
 
         Button(
             modifier = Modifier
                 .width(250.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .background(colorPrimary),
-
+                .height(50.dp)
+                .clip(RoundedCornerShape(10.dp)),
             onClick = { navController.navigate("obraScreen") }
         ) {
-            androidx.compose.material3.Text("Ver Obras")
+            androidx.compose.material3.Text(
+                text = "Ver Obras",
+                fontWeight = FontWeight.Bold, // Define o texto como bold
+                fontSize = 15.sp, // Define um tamanho de texto, caso queira ajustar
+                color = MaterialTheme.colorScheme.onPrimary // Garante contraste
+            )
         }
 
         Spacer(Modifier.height(10.dp))
 
         Text(
             text = buildAnnotatedString {
-                withStyle(style = SpanStyle(textDecoration = TextDecoration.Underline)) { // Sublinhado em todo o texto
+                withStyle(style = SpanStyle(textDecoration = TextDecoration.Underline,)) { // Sublinhado em todo o texto
                     append("Entrar como ")
                     withStyle(
                         style = SpanStyle(
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
                         )
                     ) {
                         append("Administrador.")
@@ -106,10 +117,12 @@ fun StartScreen(navController: NavController) {
                 }
             },
             color = textColor.copy(alpha = 0.5f), // Usa a cor de texto do tema com opacidade reduzida
+            fontSize = 15.sp,
             modifier = Modifier
                 .width(250.dp)
                 .clickable { navController.navigate("loginScreen") },
-            textAlign = TextAlign.End
+            textAlign = TextAlign.End,
+
         )
     }
 }

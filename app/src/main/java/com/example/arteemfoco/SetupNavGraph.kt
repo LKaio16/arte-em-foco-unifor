@@ -15,15 +15,12 @@ import com.example.arteemfoco.screens.RegisterScreen
 import com.example.arteemfoco.screens.StartScreen
 import com.example.arteemfoco.screens.admin.ObraAddAdminScreen
 import com.example.arteemfoco.screens.admin.ObraAdminScreen
-import com.example.arteemfoco.screens.admin.ObraAdminViewScreen
-import com.example.arteemfoco.screens.admin.QuizAdminScreen
 import com.example.arteemfoco.screens.admin.QuizAddAdminScreen
-import com.example.arteemfoco.screens.admin.QuizAddPerguntaAdminScreen
+import com.example.arteemfoco.screens.admin.QuizAdminScreen
 import com.example.arteemfoco.screens.obras.ObraScreen
 import com.example.arteemfoco.screens.obras.ObraViewScreen
 import com.example.arteemfoco.screens.quiz.QuizEndScreen
 import com.example.arteemfoco.screens.quiz.QuizEnterCodeScreen
-import com.example.arteemfoco.screens.quiz.QuizEnterNameScreen
 import com.example.arteemfoco.screens.quiz.QuizScreen
 
 @Composable
@@ -36,10 +33,9 @@ fun SetupNavGraph(navController: NavHostController, modifier: Modifier = Modifie
         composable(Screen.Register.route) { RegisterScreen(navController) }
         composable(Screen.QuizEnterCode.route) {
             QuizEnterCodeScreen(
-                navController = navController, quizViewModel = quizViewModel)
+                navController = navController, quizViewModel = quizViewModel
+            )
         }
-
-        composable(Screen.QuizEnterName.route) { QuizEnterNameScreen(navController) }
 
         composable(
             route = "quiz/{quizId}/{name}",
@@ -47,7 +43,12 @@ fun SetupNavGraph(navController: NavHostController, modifier: Modifier = Modifie
         ) { backStackEntry ->
             val quizId = backStackEntry.arguments?.getString("quizId") ?: ""
             val name = backStackEntry.arguments?.getString("name") ?: ""
-            QuizScreen(navController = navController, quizViewModel = quizViewModel, quizId = quizId, userName = name)
+            QuizScreen(
+                navController = navController,
+                quizViewModel = quizViewModel,
+                quizId = quizId,
+                userName = name
+            )
         }
 
         composable("${Screen.QuizEnd.route}/{correctAnswers}/{totalQuestions}") { backStackEntry ->
@@ -73,7 +74,6 @@ fun SetupNavGraph(navController: NavHostController, modifier: Modifier = Modifie
         composable(Screen.ObraAdmin.route) { ObraAdminScreen(navController) }
         composable(Screen.QuizAdmin.route) { QuizAdminScreen(navController) }
         composable(Screen.QuizAddAdmin.route) { QuizAddAdminScreen(navController) }
-//        composable(Screen.QuizAddPerguntaAdmin.route) { QuizAddPerguntaAdminScreen(navController) }
         composable(Screen.ObraAddAdmin.route) { ObraAddAdminScreen(navController) }
 
         // Navegação para a MainScreen (com BottomBar)

@@ -10,8 +10,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
@@ -26,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.arteemfoco.CaixaTexto
+
 
 @Composable
 fun QuizEndScreen(navController: NavController, correctAnswers: Int, totalQuestions: Int) {
@@ -35,50 +36,68 @@ fun QuizEndScreen(navController: NavController, correctAnswers: Int, totalQuesti
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color.White)
+            .background(MaterialTheme.colorScheme.background)
+            .padding(16.dp)
     ) {
-
+        // Caixa ilustrativa (pode ser uma imagem no futuro)
         Box(
             modifier = Modifier
-                .background(Color.Gray)
+                .background(MaterialTheme.colorScheme.primaryContainer)
                 .size(250.dp, 150.dp)
+                .clip(RoundedCornerShape(12.dp)),
+            contentAlignment = Alignment.Center
         ) {
+            Text(
+                text = "Resultado",
+                fontSize = 20.sp,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
+            )
         }
 
         Spacer(Modifier.height(20.dp))
 
+        // Texto de resultado e motivação
         Column(
             modifier = Modifier
-                .width(350.dp)
-                .padding(16.dp),
+                .widthIn(max = 350.dp)
+                .padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
                 text = "Você acertou $correctAnswers de $totalQuestions!",
                 fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center
             )
 
             Text(
                 text = "Parabéns, continue assim!",
                 fontSize = 16.sp,
-                fontWeight = FontWeight.Normal
+                fontWeight = FontWeight.Normal,
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center
             )
         }
 
-        Spacer(Modifier.height(10.dp))
+        Spacer(Modifier.height(20.dp))
 
-        val colorPrimary = androidx.compose.material3.MaterialTheme.colorScheme.primary
-
+        // Botão para voltar à tela inicial
         Button(
             modifier = Modifier
                 .width(250.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .background(colorPrimary),
+                .clip(RoundedCornerShape(10.dp)),
             onClick = { navController.navigate("startScreen") }
         ) {
-            androidx.compose.material3.Text("Voltar")
+            Text(
+                text = "Voltar",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
         }
     }
 }

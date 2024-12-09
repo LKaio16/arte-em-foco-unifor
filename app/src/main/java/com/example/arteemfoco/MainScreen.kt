@@ -1,6 +1,7 @@
 package com.example.arteemfoco
 
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -16,52 +17,86 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItemColors
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import bottomNavigationItems
 
 
 @Composable
 fun MainScreen() {
-    val navController =
-        rememberNavController()
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = navBackStackEntry?.destination
+    val navController = rememberNavController()
 
-    Scaffold(
-    ) { innerPadding ->
-        SetupAdminNavGraph(navController, modifier = Modifier.padding(innerPadding))
+    Scaffold { innerPadding ->
+        AdminScreenScaffold(
+            navController = navController,
+            content = { SetupAdminNavGraph(navController, modifier = Modifier.padding(innerPadding)) }
+        )
     }
 }
 
 @Composable
-fun AdminScreenScaffold(navController: NavHostController, content: @Composable (PaddingValues) -> Unit) {
+fun AdminScreenScaffold(
+    navController: NavHostController,
+    content: @Composable (PaddingValues) -> Unit
+) {
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = currentBackStackEntry?.destination?.route
+
+    val showBottomBar = currentDestination in listOf(
+        Screen.ObraAdmin.route,
+        Screen.QuizAdmin.route
+    )
+
     Scaffold(
         bottomBar = {
-            NavigationBar(
-                containerColor = MaterialTheme.colorScheme.primary, // Cor do fundo do NavigationBar
-
-            ) {
-                bottomNavigationItems.forEach { item ->
-                    if (item.route == Screen.ObraAdmin.route || item.route == Screen.QuizAdmin.route) {
-                        NavigationBarItem(
-                            selected = navController.currentDestination?.route == item.route,
-                            onClick = { navController.navigate(item.route) },
-                            label = { Text(item.title) },
-                            icon = { Icon(item.icon, contentDescription = item.title) },
-                            colors = NavigationBarItemColors(
-                                selectedIconColor = MaterialTheme.colorScheme.onPrimary, // Cor do ícone selecionado
-                                selectedTextColor = MaterialTheme.colorScheme.onPrimary, // Cor do texto selecionado
-                                selectedIndicatorColor = MaterialTheme.colorScheme.primary, // Cor do indicador selecionado
-                                unselectedIconColor = MaterialTheme.colorScheme.outline, // Cor do ícone não selecionado
-                                unselectedTextColor = MaterialTheme.colorScheme.outline, // Cor do texto não selecionado
-                                disabledIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f), // Cor do ícone desabilitado
-                                disabledTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f) // Cor do texto desabilitado
+            if (showBottomBar) {
+                NavigationBar(containerColor = MaterialTheme.colorScheme.primary) {
+                    bottomNavigationItems.forEach { item ->
+                        if (item.route == Screen.ObraAdmin.route || item.route == Screen.QuizAdmin.route) {
+                            NavigationBarItem(
+                                selected = currentDestination == item.route,
+                                onClick = {
+                                    navController.navigate(item.route) {
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                },
+                                label = { Text(item.title) },
+                                icon = { Icon(item.icon, contentDescription = item.title) },
+                                colors = NavigationBarItemColors(
+                                    selectedIconColor = MaterialTheme.colorScheme.onPrimary,
+                                    selectedTextColor = MaterialTheme.colorScheme.onPrimary,
+                                    selectedIndicatorColor = MaterialTheme.colorScheme.primary,
+                                    unselectedIconColor = MaterialTheme.colorScheme.outline,
+                                    unselectedTextColor = MaterialTheme.colorScheme.outline,
+                                    disabledIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+                                    disabledTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                                )
                             )
-                        )
+                        }
                     }
                 }
             }
         }
     ) { innerPadding ->
         content(innerPadding)
+
+        // Intercepta o botão "voltar"
+        BackHandler {
+            if (currentDestination == Screen.QuizAdmin.route) {
+                // Vai para StartScreen e remove todas as rotas
+                navController.navigate("startScreen") {
+                    popUpTo(navController.graph.findStartDestination().id) { inclusive = true }
+                }
+            } else {
+                // Comportamento padrão de voltar
+                navController.popBackStack()
+            }
+        }
     }
 }
