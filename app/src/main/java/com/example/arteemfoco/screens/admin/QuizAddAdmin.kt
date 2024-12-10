@@ -23,7 +23,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 @Composable
 fun QuizAddAdminScreen(navController: NavController) {
     var title by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
     var audioDescription by remember { mutableStateOf("") }
 
     Column(
@@ -47,7 +46,6 @@ fun QuizAddAdminScreen(navController: NavController) {
                     .size(30.dp)
             )
 
-            // Título
             Text(
                 text = "Criar Quiz",
                 fontSize = 22.sp,
@@ -64,7 +62,7 @@ fun QuizAddAdminScreen(navController: NavController) {
         // Conteúdo rolável
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .weight(1f) // Ocupa o espaço restante
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp)
         ) {
@@ -85,7 +83,7 @@ fun QuizAddAdminScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Descrição do Quiz
+            // Descrição de Áudio
             Text(
                 text = "Descrição de Áudio",
                 fontSize = 16.sp,
@@ -101,13 +99,12 @@ fun QuizAddAdminScreen(navController: NavController) {
             )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Botão de "Salvar Quiz" fixo
+        // Botão de "Salvar Quiz"
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
+                .padding(bottom = 40.dp)
         ) {
             Button(
                 onClick = {
@@ -135,6 +132,7 @@ fun QuizAddAdminScreen(navController: NavController) {
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable

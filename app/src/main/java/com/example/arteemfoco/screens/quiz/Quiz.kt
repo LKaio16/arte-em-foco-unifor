@@ -119,7 +119,7 @@ fun QuizScreen(navController: NavController, quizViewModel: QuizViewModel, quizI
                             .height(48.dp)
                             .clip(RoundedCornerShape(10.dp))
                     ) {
-                        Text("Ouvir Pergunta", fontSize = 16.sp)
+                        Text("Ouvir Pergunta", fontSize = 16.sp, color = MaterialTheme.colorScheme.onPrimary)
                     }
                 }
             }

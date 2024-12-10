@@ -56,7 +56,6 @@ fun QuizAddPerguntaAdminScreen(navController: NavController, quizId: String) {
                     .size(30.dp)
             )
 
-            // Título
             Text(
                 text = "Adicionar Pergunta",
                 fontSize = 22.sp,
@@ -73,7 +72,7 @@ fun QuizAddPerguntaAdminScreen(navController: NavController, quizId: String) {
         // Conteúdo rolável
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .weight(1f) // Ocupa o espaço restante
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp)
         ) {
@@ -162,8 +161,6 @@ fun QuizAddPerguntaAdminScreen(navController: NavController, quizId: String) {
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
         // Botão de "Salvar Pergunta" fixo
         Box(
             modifier = Modifier
@@ -197,6 +194,7 @@ fun QuizAddPerguntaAdminScreen(navController: NavController, quizId: String) {
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
